@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { dmSansFont, robotoFont } from "./fonts";
+import Navbar from "@/components/Navbar";
 
 
 export const metadata: Metadata = {
@@ -18,7 +19,11 @@ export default function RootLayout({
       <body
         className={`${robotoFont.variable} ${dmSansFont.variable} antialiased`}
       >
-        {children}
+        <Navbar/>
+        <main className="mx-10 mt-5">
+     {children}
+        </main>
+   
       </body>
     </html>
   );
