@@ -1,4 +1,6 @@
+import Button from "@/components/ui/Button";
 import InventoryTable from "./_components/InventoryTable";
+import Link from "next/link";
 
 
 
@@ -14,6 +16,10 @@ export default function page(){
     return (
         <div>
          <h2>Inventory page</h2>
+         <div className="flex gap-3 mt-3">
+            <Link href={'/inventory/create'}><Button text="Create Part"/></Link>
+        
+         </div>
          <InventoryTable headings={headings} values={values}/>
         </div>
     )
