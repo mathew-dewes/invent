@@ -1,15 +1,10 @@
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Label from "@/components/ui/Label";
-import prisma from "@/lib/prisma";
+
 
 export default async function page() {
 
-
-  const posts = await prisma.post.findMany();
-
-  console.log(posts);
-  
   return (
     <div>
       <h1>Dashboard goes here</h1>
