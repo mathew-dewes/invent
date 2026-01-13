@@ -13,15 +13,20 @@ import { Button } from "@/components/ui/button"
 import { MoreHorizontal, ArrowUpDown } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 
+import StockStatusBadge from "@/components/web/StockStatusBadge"
+import { StockStatus } from "@/lib/types"
+
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Stock = {
   id: string
   name: string
+  status: StockStatus | string
   quantity: number
   category: string
   location: string
   vendor: string
+  brand: string
   unitCost: number
 }
 
@@ -50,7 +55,13 @@ export const columns: ColumnDef<Stock>[] = [
   },
   {
     accessorKey: "name",
+
     header: "Name",
+  },
+  {
+    accessorKey: "status",
+    cell:({row}) => <StockStatusBadge status={row.getValue("status") as StockStatus}/>,
+    header: "Status",
   },
       {
     accessorKey: "quantity",
@@ -61,21 +72,6 @@ export const columns: ColumnDef<Stock>[] = [
     },
   },
 
-
-  // To be used for money
-  //   {
-  //   accessorKey: "quantity",
-  //     header: () => <div className="text-right">Quantity</div>,
-  //   cell: ({ row }) => {
-  //     const amount = parseFloat(row.getValue("quantity"))
-  //     const formatted = new Intl.NumberFormat("en-US", {
-  //       style: "currency",
-  //       currency: "USD",
-  //     }).format(amount)
- 
-  //     return <div className="text-right font-medium">{formatted}</div>
-  //   },
-  // },
   {
     accessorKey: "category",
     header: "Category",
@@ -83,6 +79,11 @@ export const columns: ColumnDef<Stock>[] = [
         {
     accessorKey: "location",
     header: "location",
+  },
+    {
+    accessorKey: "brand",
+    header: "Brand",
+    
   },
   {
     accessorKey: "vendor",
@@ -99,6 +100,7 @@ export const columns: ColumnDef<Stock>[] = [
     },
     
   },
+
 
     {
     accessorKey: "unitCost",
