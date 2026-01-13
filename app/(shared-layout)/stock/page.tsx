@@ -1,3 +1,4 @@
+import prisma from "@/lib/prisma";
 import { columns, Stock, } from "./columns"
 import { DataTable } from "./data-table"
 
@@ -42,10 +43,15 @@ async function getData(): Promise<Stock[]> {
 }
 
 export default async function DemoPage() {
-  const data = await getData()
+  const data = await getData();
+
+  const post = await prisma.post.findMany();
+  console.log(post[0].title);
+  
 
   return (
     <div className="container mx-auto py-10">
+      <p>{post[0].title}</p>
       <DataTable columns={columns} data={data} />
     </div>
   )
