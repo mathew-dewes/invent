@@ -61,7 +61,7 @@ export const VendorColumns: ColumnDef<Vendor>[] = [
     header: "Email",
   },
     {
-    accessorKey: "contactPerson",
+    accessorKey: "contactName",
     header: "Contact Person",
     
   },

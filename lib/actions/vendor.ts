@@ -3,18 +3,14 @@
 import z from "zod";
 import { vendorSchema } from "../schemas";
 import prisma from "../prisma";
-import { auth } from "../auth";
-import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { getUserId } from "./auth";
+import { revalidatePath } from "next/cache";
 
 export async function createVendor(values: z.infer<typeof vendorSchema>){
 
-    const session = await auth.api.getSession({
-        headers: await headers()
-    });
 
-    const user = session?.user;
-
-    if (!user) throw new Error('Unauthorized')
+    const userId = await getUserId();
 
     try {
         const parsed = vendorSchema.safeParse(values);
@@ -32,9 +28,12 @@ export async function createVendor(values: z.infer<typeof vendorSchema>){
             email,
             phone,
             contactName,
-            userId: user?.id
+            userId
         }
-    })
+    });
+
+    revalidatePath('/vendors')
+    redirect('/vendors');
 
     } catch (error) {
     console.error('Create vendor error:', error);

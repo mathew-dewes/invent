@@ -20,11 +20,12 @@ export type Stock = {
 export type Vendor = {
     id: string
     name: string
-    address: string
-    phoneNumber: string
+    address: string | null
+    phone: string | null
     email: string
-    contactPerson: string
+    contactName: string
 }
+
 
 export type Request = {
 id: string,
