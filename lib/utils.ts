@@ -13,6 +13,9 @@ export function setStatusColor(status: StockStatus | RequestStatus){
           switch (status) {
   
               case "OPEN":
+              style = "bg-orange-400"
+              break;
+              case "READY":
               style = "bg-blue-400"
               break;
             

@@ -135,5 +135,6 @@ model Request {
 enum RequestStatus {
   OPEN
   PENDING
+  READY
   COMPLETE
 }
