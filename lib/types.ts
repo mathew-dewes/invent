@@ -5,26 +5,27 @@ export type RequestStatus = "Open" | "Pending" | "Complete"
 export type Stock = {
   id: string
   name: string
-  status: StockStatus
   quantity: number
-  category: string
   location: string
-  vendor: string
+  reorderPoint: number,
+  maxStock: number,
+  vendor: {
+    name: string
+  },
   brand: string
   unitCost: number
-  maxStock: number
-  reorderPoint: number
 }
 
 
 export type Vendor = {
     id: string
     name: string
-    address: string
-    phoneNumber: string
+    address: string | null
+    phone: string | null
     email: string
-    contactPerson: string
+    contactName: string
 }
+
 
 export type Request = {
 id: string,

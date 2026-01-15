@@ -11,11 +11,18 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { Vendor } from "@/lib/types";
+import { createStock } from "@/lib/actions/stock";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export const categories = ['All', 'Food & Drink', 'Cafes', 'Restaurants', 'Bars & Pubs', 'Attractions', 'Outdoor & Nature', 'Activities & Experiences', 'Shopping & Retail', 'Accommodation', 'Events & Venues'] as const
 
-export default function StockForm() {
+export default function StockForm({vendors}:
+    {vendors: Vendor[]}
+) {
     const [isPending, startTransition] = useTransition();
+    const router = useRouter()
 
     const form = useForm({
         resolver: zodResolver(stockSchema),
@@ -24,7 +31,6 @@ export default function StockForm() {
             brand: "",
             location: "",
             partNumber: "",
-            vendor: "",
             unitCost: "",
             quantity: "",
             maxStock: "",
@@ -37,7 +43,16 @@ export default function StockForm() {
         console.log(values);
         
         startTransition(async () => {
-            console.log(values);
+            try {
+        await createStock(values);
+        toast.success(`${values.name} was added`);
+        router.push('/stock')
+        
+            } catch (error) {
+            console.log(error);
+            toast.error("There was error. Please advise admin")
+            }
+       
 
 
         })
@@ -87,7 +102,7 @@ export default function StockForm() {
                             )}
                         />
 
-                        <Controller name="vendor" control={form.control}
+                        <Controller name="vendorId" control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field >
                                     <FieldLabel>Vendor</FieldLabel>
@@ -106,8 +121,8 @@ export default function StockForm() {
                                         <SelectContent>
                                             <SelectGroup >
                                                 <SelectLabel>Location</SelectLabel>
-                                                {categories.map((location, key) => {
-                                                    return <SelectItem key={key} value={location}>{location}</SelectItem>
+                                                {vendors?.map((vendor, key) => {
+                                                    return <SelectItem key={key} value={vendor.id}>{vendor.name}</SelectItem>
                                                 })}
                                             </SelectGroup>
                                         </SelectContent>

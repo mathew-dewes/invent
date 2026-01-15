@@ -10,26 +10,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { MoreHorizontal, ArrowUpDown } from "lucide-react"
+import { MoreHorizontal } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 
 
-import { StockStatus } from "@/lib/types"
+import { Stock, StockStatus } from "@/lib/types"
 import StockStatusBadge from "../badges/StockStatusBadge"
+import { generateStockStatus } from "@/lib/helpers"
+import { deleteStock } from "@/lib/actions/stock"
+import { startTransition } from "react"
+import { toast } from "sonner"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Stock = {
-  id: string
-  name: string
-  status: StockStatus | string
-  quantity: number
-  category: string
-  location: string
-  vendor: string
-  brand: string
-  unitCost: number
-}
+
 
 export const Stockcolumns: ColumnDef<Stock>[] = [
       {
@@ -59,9 +53,14 @@ export const Stockcolumns: ColumnDef<Stock>[] = [
 
     header: "Item",
   },
-  {
-    accessorKey: "status",
-    cell:({row}) => <StockStatusBadge status={row.getValue("status") as StockStatus}/>,
+  { 
+
+    cell:({row}) => {
+      const quantity = row.getValue("quantity") as number;
+      const reorderAmount = row.getValue("reorderPoint") as number;
+      
+    return <StockStatusBadge status={generateStockStatus(quantity, reorderAmount)  as StockStatus}/>
+    },
     header: "Status",
   },
       {
@@ -73,10 +72,6 @@ export const Stockcolumns: ColumnDef<Stock>[] = [
     },
   },
 
-  {
-    accessorKey: "category",
-    header: "Category",
-  },
         {
     accessorKey: "location",
     header: "location",
@@ -87,18 +82,18 @@ export const Stockcolumns: ColumnDef<Stock>[] = [
     
   },
   {
-    accessorKey: "vendor",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Vendor
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
+    accessorKey: "vendor.name",
+     header: "Vendor",
+    
+  },
+  {
+    accessorKey: "maxStock",
+     header: "Max QTY",
+    
+  },
+  {
+    accessorKey: "reorderPoint",
+     header: "Reorder QTY",
     
   },
 
@@ -118,11 +113,13 @@ export const Stockcolumns: ColumnDef<Stock>[] = [
   },
 
 
+
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original
- 
+      const stockId = row.original.id;
+
+   
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -133,13 +130,33 @@ export const Stockcolumns: ColumnDef<Stock>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
+                      <DropdownMenuItem>Update Stock</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+
+
+              <form action={
+                (formData)=>{
+                  startTransition(async()=>{
+                    try {
+                        await deleteStock(formData);
+                        toast.success(`${row.original.name} was deleted`);
+                    } catch (error) {
+                      console.log(error);
+                      toast.error("There was error deleting this stock item")
+                      
+                    }
+                  })
+          
+                }
+                }>
+                  <input type="hidden" name="id" value={stockId} />
+              <button type="submit">Delete stock</button>
+              </form>
+
+              
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
+            <DropdownMenuItem>Copy vendor email</DropdownMenuItem>
             <DropdownMenuItem>View payment details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
