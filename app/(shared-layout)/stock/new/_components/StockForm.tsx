@@ -16,8 +16,6 @@ import { createStock } from "@/lib/actions/stock";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-export const categories = ['All', 'Food & Drink', 'Cafes', 'Restaurants', 'Bars & Pubs', 'Attractions', 'Outdoor & Nature', 'Activities & Experiences', 'Shopping & Retail', 'Accommodation', 'Events & Venues'] as const
-
 export default function StockForm({vendors}:
     {vendors: Vendor[]}
 ) {

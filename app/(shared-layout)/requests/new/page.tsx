@@ -1,7 +1,12 @@
-export default function Page(){
+import { getStockNames } from "@/lib/queries/stock";
+import RequestForm from "./_components/RequestForm";
+
+export default async function Page(){
+
+    const stock = await getStockNames();
     return (
         <div>
-            <h1>Create new request</h1>
+            <RequestForm stock={stock}/>
         </div>
     )
 }

@@ -5,7 +5,7 @@ import prisma from "../prisma";
 
 export async function getStock(){
 const userId = await getUserId();
-const vendors = await prisma.stock.findMany({
+const stock = await prisma.stock.findMany({
     where: {
         userId
     },
@@ -32,7 +32,29 @@ const vendors = await prisma.stock.findMany({
 });
 
 
-return vendors;
+return stock;
 
 
+};
+
+export async function getStockNames(){
+const userId = await getUserId();
+const stock = await prisma.stock.findMany({
+    where: {
+        userId
+    },
+    select:{
+        id: true,
+        name:true,
+  
+    },
+
+    orderBy: {
+        createdAt: "desc"
+    }
+
+});
+
+
+return stock;
 }

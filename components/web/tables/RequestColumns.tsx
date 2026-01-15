@@ -80,11 +80,6 @@ export const Requestcolumns: ColumnDef<Request>[] = [
     header: "Status",
   },
   
-
-  {
-    accessorKey: "group",
-    header: "Group",
-  },
         {
     accessorKey: "plant",
     header: "Plant",
@@ -115,11 +110,16 @@ export const Requestcolumns: ColumnDef<Request>[] = [
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(payment.id)}
             >
-              Copy payment ID
+              Mark as complete
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(payment.id)}
+            >
+              Mark as pending
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>Edit request</DropdownMenuItem>
+            <DropdownMenuItem>Cancel request</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
