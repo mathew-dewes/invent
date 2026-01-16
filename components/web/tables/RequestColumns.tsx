@@ -52,17 +52,26 @@ export const Requestcolumns: ColumnDef<Request>[] = [
     header: "#",
   },
   {
-    accessorKey: "requestDate",
-
+    accessorKey: "createdAt",
     header: "Date",
+        cell: ({ getValue }) => {
+      const date = new Date(getValue() as string);
+      return date.toLocaleString("en-NZ", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
   },
+},
   {
-    accessorKey: "requestee",
+    accessorKey: "customer",
 
     header: "Customer",
   },
   {
-    accessorKey: "item",
+    accessorKey: "stockItem.name",
 
     header: "Item",
   },
@@ -80,17 +89,12 @@ export const Requestcolumns: ColumnDef<Request>[] = [
     header: "Status",
   },
   
-
-  {
-    accessorKey: "group",
-    header: "Group",
-  },
         {
-    accessorKey: "plant",
+    accessorKey: "plantNumber",
     header: "Plant",
   },
         {
-    accessorKey: "notes",
+    accessorKey: "note",
     header: "Notes",
   },
 
@@ -115,11 +119,16 @@ export const Requestcolumns: ColumnDef<Request>[] = [
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(payment.id)}
             >
-              Copy payment ID
+              Mark as complete
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(payment.id)}
+            >
+              Mark as pending
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>Edit request</DropdownMenuItem>
+            <DropdownMenuItem>Cancel request</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )

@@ -53,7 +53,7 @@ export const VendorColumns: ColumnDef<Vendor>[] = [
   },
 
   {
-    accessorKey: "phoneNumber",
+    accessorKey: "phone",
     header: "Phone",
   },
         {
