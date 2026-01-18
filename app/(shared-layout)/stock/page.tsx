@@ -12,7 +12,6 @@ export default async function StockPage({searchParams}:
 
   const filters = ((await searchParams).stock);
 
-  console.log(filters);
   
 
   return (
