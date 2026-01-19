@@ -56,6 +56,34 @@ export async function getPurchases(filter?: PurchaseStatus){
 
 }
 
+export async function getPurchaseById(id: string){
+      const userId = await getUserId();
+
+    const purchase = await prisma.purchase.findUnique({
+        where:{userId, id},
+        select:{
+            id: true,
+            createdAt: true,
+            purchaseNumber: true,
+            notes: true,
+            quantity: true,
+            PO: true,
+            totalCost: true,
+            status: true,
+            stockItem: {
+                select:{
+                    id: true,
+                    name: true,
+                    quantity: true
+                }
+            }
+
+        }
+    });
+
+    return purchase
+}
+
 
 export async function getPurchaseStatusCount(){
         const userId = await getUserId();

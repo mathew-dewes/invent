@@ -62,7 +62,7 @@ export async function updateRequest(values: z.infer<typeof requestSchema>, reque
             throw new Error('Validation failed');
         };
 
-        const requestNumber = await generateRequestNumber();
+
 
         const {customer, plant: plantNumber, quantity, stockItem: stockId, notes} = parsed.data;
 
@@ -72,8 +72,6 @@ export async function updateRequest(values: z.infer<typeof requestSchema>, reque
                 stockId,
                 quantity: Number(quantity),
                 plantNumber,
-
-                requestNumber,
                 userId,
                 note: notes
             },
