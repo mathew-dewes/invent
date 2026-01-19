@@ -6,46 +6,55 @@ import { Combobox } from "@/components/ui/comboBox";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { createRequest } from "@/lib/actions/request";
-import { requestSchema } from "@/lib/schemas";
+import { updatePurchase } from "@/lib/actions/purchase";
+import { purchaseSchema } from "@/lib/schemas";
+import { SingleRequest } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
+
 import z from "zod";
 
 
 
-export default function RequestForm({stock}:
-    {stock: {id: string, name: string}[]}
+
+
+
+
+export default function EditPurchaseForm({stock, values, purchaseId}:
+    {stock: {id: string, name: string}[], values: SingleRequest, purchaseId: string}
 ){
         const [isPending, startTransition] = useTransition();
          const router = useRouter()
 
         
         const form = useForm({
-            resolver: zodResolver(requestSchema),
+            resolver: zodResolver(purchaseSchema),
             defaultValues: {
-                customer:"",
-                stockItem: "",
-                quantity: "",
-                plant: "",
-                notes: ""
+                item: values.stockItem.id,
+                quantity: String(values.quantity),
+                poNumber: values.PO,
+                notes: values.note ?? ""
     
     
             }
         });
 
-            function onSubmit(values: z.infer<typeof requestSchema>) {
+            function onSubmit(values: z.infer<typeof purchaseSchema>) {
 
                 
                 startTransition(async () => {
+console.log(values);
+
+      
+                    
             try {
-        await createRequest(values);
-        toast.success(`Request was placed successfully`);
-        router.push('/requests')
+               await updatePurchase(values, purchaseId);
+        toast.success(`Purchase has been updated`);
+        router.push('/purchases')
         
             } catch (error) {
             console.log(error);
@@ -61,25 +70,14 @@ export default function RequestForm({stock}:
     return (
           <Card className="w-full max-w-xl mx-auto mt-15">
             <CardHeader className="text-center">
-                <CardTitle className="text-xl">Create Request</CardTitle>
-                <CardDescription>Please fill out the required fields to create a new request</CardDescription>
+                <CardTitle className="text-xl">Edit Purchase</CardTitle>
+                <CardDescription>Please fill out the required fields to place an order with a vendor</CardDescription>
             </CardHeader>
             <CardContent>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <FieldGroup>
-                        <Controller name="customer" control={form.control}
-                            render={({ field, fieldState }) => (
-                                <Field>
-                                    <FieldLabel>Customer name</FieldLabel>
-                                    <Input aria-invalid={fieldState.invalid} placeholder="Customer name" {...field} />
-                                    {fieldState.invalid &&
-                                        <FieldError errors={[fieldState.error]} />
-                                    }
-                                </Field>
-                            )}
-                        />
 
-                        <Controller name="stockItem" control={form.control}
+                              <Controller name="item" control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field>
                                     <FieldLabel>Stock Item</FieldLabel>
@@ -95,33 +93,23 @@ export default function RequestForm({stock}:
                             )}
                         />
 
-
-
-                        {/* <Field>
-                               <FieldLabel>Stock Item</FieldLabel>
-                            <div>
-    <Combobox values={stock}/>
-                            </div>
-
-                        </Field> */}
-                            
-                            <div className="flex gap-5">
+                                              <div className="flex gap-5">
       <Controller name="quantity" control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field>
                                     <FieldLabel>Quantity</FieldLabel>
-                                    <Input type="number" aria-invalid={fieldState.invalid} placeholder="Enter email address" {...field} />
+                                    <Input type="number" aria-invalid={fieldState.invalid} placeholder="Order quantity" {...field} />
                                     {fieldState.invalid &&
                                         <FieldError errors={[fieldState.error]} />
                                     }
                                 </Field>
                             )}
                         />
-                        <Controller name="plant" control={form.control}
+                        <Controller name="poNumber" control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field>
-                                    <FieldLabel>Plant Number</FieldLabel>
-                                    <Input aria-invalid={fieldState.invalid} placeholder="Enter plant number" {...field} />
+                                    <FieldLabel>PO number</FieldLabel>
+                                    <Input aria-invalid={fieldState.invalid} placeholder="Enter PO number" {...field} />
                                     {fieldState.invalid &&
                                         <FieldError errors={[fieldState.error]} />
                                     }
@@ -129,11 +117,6 @@ export default function RequestForm({stock}:
                             )}
                         />
                             </div>
-
-                            
-                    
-
-        
 
 
                         <Controller name="notes" control={form.control}
@@ -156,7 +139,7 @@ export default function RequestForm({stock}:
                                     <Loader2 className="size-4 animate-spin" />
                                     <span>Loading...</span>
                                 </>
-                            ) : (<span>Create request</span>)}
+                            ) : (<span>Update purchase</span>)}
                         </Button>
 
 

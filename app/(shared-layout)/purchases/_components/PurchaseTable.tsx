@@ -1,11 +1,14 @@
 import { DataTable } from "@/components/web/tables/DataTable"
 import { Purchasecolumns } from "@/components/web/tables/PurchaseColumns"
-import { getPurchases } from "@/lib/queries/purchase"
+import { PurchaseStatus } from "@/generated/prisma/enums"
+import { getPurchases, getPurchaseStatusCount } from "@/lib/queries/purchase"
 
-export default async function PurchaseTable(){
+export default async function PurchaseTable({filter}:
+     {filter: PurchaseStatus | undefined}){
 
-    const purchases = await getPurchases()
+    const purchases = await getPurchases(filter);
+    const statusCounts = await getPurchaseStatusCount();
     return (
-        <DataTable filter="PO" columns={Purchasecolumns} data={purchases}/>
+        <DataTable queryCounts={statusCounts} filter="PO" columns={Purchasecolumns} data={purchases}/>
     )
 }

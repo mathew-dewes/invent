@@ -1,10 +1,11 @@
 "use server";
 
+import { PurchaseStatus } from "@/generated/prisma/enums";
 import { getUserId } from "../actions/auth";
 import prisma from "../prisma";
 
 
-export async function getPurchases(){
+export async function getPurchases(filter?: PurchaseStatus){
     const userId = await getUserId();
 
     const purchases = await prisma.purchase.findMany({
@@ -30,5 +31,78 @@ export async function getPurchases(){
         }
     });
 
+
+    const placedPurchases = purchases.filter(
+        item => item.status ===  "PLACED"
+    );
+    const delayedPurchases = purchases.filter(
+        item => item.status ===  "DELAYED"
+    );
+    const receivedPurchases = purchases.filter(
+        item => item.status ===  "RECEIVED"
+    );
+
+
+    if (filter === "PLACED"){
+        return placedPurchases;
+    } else if (filter === "DELAYED"){
+        return delayedPurchases;
+    } else if (filter === "RECEIVED"){
+        return receivedPurchases;
+    } else {
+
     return purchases;
+    }
+
+}
+
+export async function getPurchaseById(id: string){
+      const userId = await getUserId();
+
+    const purchase = await prisma.purchase.findUnique({
+        where:{userId, id},
+        select:{
+            id: true,
+            createdAt: true,
+            purchaseNumber: true,
+            notes: true,
+            quantity: true,
+            PO: true,
+            totalCost: true,
+            status: true,
+            stockItem: {
+                select:{
+                    id: true,
+                    name: true,
+                    quantity: true
+                }
+            }
+
+        }
+    });
+
+    return purchase
+}
+
+
+export async function getPurchaseStatusCount(){
+        const userId = await getUserId();
+
+        const requests = await prisma.purchase.findMany({
+            select:{
+                status:true
+            },
+            where:{userId}
+        });
+
+
+        const queryCounts = {
+            PLACED:requests.filter(q => q.status === "PLACED").length,
+            DELAYED: requests.filter(q => q.status === "DELAYED").length,
+            RECEIVED: requests.filter(q => q.status === "RECEIVED").length,
+        
+        }
+
+          return queryCounts
+
 }

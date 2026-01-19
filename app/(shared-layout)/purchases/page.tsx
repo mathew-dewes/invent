@@ -2,12 +2,17 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Suspense } from "react";
 import PurchaseTable from "./_components/PurchaseTable";
+import { PurchaseStatus } from "@/generated/prisma/enums";
 
 
 
-export default  function RequestsPage(){
+export default  async function RequestsPage({searchParams}:
+  {searchParams: Promise<{status: PurchaseStatus}>}
+){
 
-    
+      const filters = ((await searchParams).status);
+
+        
     return (
         <div>
   <div className="flex justify-between">
@@ -16,7 +21,7 @@ export default  function RequestsPage(){
        
       </div>
       <Suspense fallback={"Loading purchases..."}>
-        <PurchaseTable />
+        <PurchaseTable filter={filters} />
       </Suspense>
         </div>
     )

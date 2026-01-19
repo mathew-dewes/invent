@@ -5,15 +5,36 @@ import {  Button, buttonVariants } from "../ui/button";
 import { ThemeToggle } from "./ThemeToggle";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 
 const { useSession } = authClient;
+
+
+const links = [
+    {href: '/stock', label: "Stock"},
+    {href: '/requests', label: "Requests"},
+    {href: '/purchases', label: "Puchases"},
+    {href: '/vendors', label: "Vendors"},
+]
 
 export function Navbar() {
         const router = useRouter();
             const {data: session, isPending, refetch 
     } = useSession();
+
+     const pathname = usePathname();
+
+     console.log(pathname);
+
+     const generateStyling = (link: string) =>{
+        if (pathname !== link){
+            return buttonVariants({ variant: "ghost" })
+        } else {
+            return buttonVariants({ variant: "secondary" })
+        }
+     }
+     
 
     
     return (
@@ -24,13 +45,14 @@ export function Navbar() {
            
                     </h1></Link>
                 <div className="flex items-center gap-2">
-                    <Link className={buttonVariants({ variant: "ghost" })} href={'/stock'}>Stock</Link>
-                    <Link className={buttonVariants({ variant: "ghost" })} href={'/requests'}>Requests</Link>
-                    <Link className={buttonVariants({ variant: "ghost" })} href={'/purchases'}>Purchases</Link>
-                    <Link className={buttonVariants({ variant: "ghost" })} href={'/vendors'}>Vendors</Link>
-       
-          
-
+                    {links.map((link, key)=>{
+                        return <Link 
+                        key={key} 
+                        className={generateStyling(link.href)} 
+                        href={link.href}>
+                            {link.label}</Link>
+                    })}
+        
                 </div>
 
 

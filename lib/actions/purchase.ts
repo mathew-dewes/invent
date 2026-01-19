@@ -10,8 +10,6 @@ import { revalidatePath } from "next/cache";
 
 export async function createPurchase(values: z.infer<typeof purchaseSchema>){
 
-    console.log(values);
-    
 
     const userId = await getUserId();
 
@@ -48,6 +46,55 @@ export async function createPurchase(values: z.infer<typeof purchaseSchema>){
                 notes,
                 PO: poNumber
             }
+        })
+
+
+
+
+    } catch (error) {
+        console.error('Create vendor error:', error);
+        throw error;
+        
+    }
+}
+
+
+export async function updatePurchase(values: z.infer<typeof purchaseSchema>, purchaseId: string){
+
+    const userId = await getUserId();
+
+    try {
+        const parsed = purchaseSchema.safeParse(values);
+
+
+
+        
+            if (!parsed.success) {
+            console.error('Validation errors:', parsed.error);
+            throw new Error('Validation failed');
+        };
+    
+            
+                const {item, quantity, poNumber, notes} = parsed.data;
+
+
+                const stockItem = await prisma.stock.findUnique({
+                    where: {id: item}
+                });
+
+                const totalCost = stockItem!.unitCost * Number(quantity);
+    
+
+        await prisma.purchase.update({
+            data:{
+                stockId: item,
+                quantity: Number(quantity),
+                totalCost,
+                userId,
+                notes,
+                PO: poNumber
+            },
+        where:{id: purchaseId}
         })
 
 

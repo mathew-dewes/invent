@@ -18,6 +18,7 @@ import { Purchase, StockStatus } from "@/lib/types"
 import StockStatusBadge from "../badges/StockStatusBadge"
 import { startTransition } from "react"
 import { changePurchaseStatus } from "@/lib/actions/purchase"
+import Link from "next/link"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -59,7 +60,7 @@ export const Purchasecolumns: ColumnDef<Purchase>[] = [
       const date = new Date(getValue() as string);
       return date.toLocaleString("en-NZ", {
         year: "numeric",
-        month: "short",
+        month: "numeric",
         day: "numeric",
     
       });
@@ -171,7 +172,8 @@ export const Purchasecolumns: ColumnDef<Purchase>[] = [
 
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
+            <Link href={`/purchases/${purchaseId}/edit`}><DropdownMenuItem>Edit Purchase</DropdownMenuItem></Link>
+
             <DropdownMenuItem>View payment details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

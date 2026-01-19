@@ -6,8 +6,9 @@ import { Combobox } from "@/components/ui/comboBox";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { createRequest } from "@/lib/actions/request";
+import { updateRequest } from "@/lib/actions/request";
 import { requestSchema } from "@/lib/schemas";
+import { SingleRequest } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -18,20 +19,22 @@ import z from "zod";
 
 
 
-export default function RequestForm({stock}:
-    {stock: {id: string, name: string}[]}
+export default function EditRequestForm({stock, values, requestId}:
+    {stock: {id: string, name: string}[], values:SingleRequest, requestId: string}
 ){
         const [isPending, startTransition] = useTransition();
-         const router = useRouter()
+         const router = useRouter();
+
+        
 
         
         const form = useForm({
             resolver: zodResolver(requestSchema),
             defaultValues: {
-                customer:"",
-                stockItem: "",
-                quantity: "",
-                plant: "",
+                customer:values.customer,
+                stockItem: values.stockItem.id,
+                quantity: String(values.quantity),
+                plant: values.plantNumber,
                 notes: ""
     
     
@@ -43,8 +46,8 @@ export default function RequestForm({stock}:
                 
                 startTransition(async () => {
             try {
-        await createRequest(values);
-        toast.success(`Request was placed successfully`);
+        await updateRequest(values, requestId);
+        toast.success(`Request was updated`);
         router.push('/requests')
         
             } catch (error) {
@@ -61,7 +64,7 @@ export default function RequestForm({stock}:
     return (
           <Card className="w-full max-w-xl mx-auto mt-15">
             <CardHeader className="text-center">
-                <CardTitle className="text-xl">Create Request</CardTitle>
+                <CardTitle className="text-xl">Edit Request</CardTitle>
                 <CardDescription>Please fill out the required fields to create a new request</CardDescription>
             </CardHeader>
             <CardContent>

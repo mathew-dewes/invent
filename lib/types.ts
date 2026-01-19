@@ -19,19 +19,19 @@ export type Stock = {
 }
 
 export type SingleStockItem = {
-   id: string;
+  id: string;
+  name: string;
+  quantity: number;
+  location: string;
+  brand: string;
+  unitCost: number;
+  maxStock: number;
+  reorderPoint: number;
+  partNumber: string
+  vendor: {
     name: string;
-    quantity: number;
-    location: string;
-    brand: string;
-    unitCost: number;
-    maxStock: number;
-    reorderPoint: number;
-    partNumber: string
-    vendor: {
-        name: string;
-        id: string
-    };
+    id: string
+  };
 }
 
 
@@ -58,6 +58,22 @@ export type Request = {
   quantity: number
   plantNumber: string
   note?: string | null
+}
+
+export type SingleRequest = {
+  id: string;
+  createdAt: Date;
+  quantity: number;
+  purchaseNumber: number;
+  PO: string;
+  note?: string | null
+  status: PurchaseStatus;
+  totalCost: number;
+  stockItem: {
+    id: string,
+    name: string;
+    quantity: number;
+  };
 }
 
 export type Purchase = {

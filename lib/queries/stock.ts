@@ -92,6 +92,31 @@ export async function getStockById(id: string) {
 
     return stock;
 
+};
+
+
+export async function getStockByStatusCount(){
+       const userId = await getUserId();
+
+
+const stock = await prisma.stock.findMany({
+              select: {
+      quantity: true,
+      reorderPoint: true,
+    },
+    where:{userId}
+      },
+    );
+
+  const queryCounts = {
+    out: stock.filter(s => s.quantity === 0).length,
+    low: stock.filter(s => s.quantity > 0 && s.quantity < s.reorderPoint).length,
+    good: stock.filter(s => s.quantity > s.reorderPoint).length,
+  };
+
+  return queryCounts
+   
+
 }
 
 export async function getStockNames() {
