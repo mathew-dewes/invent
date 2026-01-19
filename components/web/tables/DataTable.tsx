@@ -32,7 +32,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[],
   filter: string,
-  queryCounts: Record< string, number >
+  queryCounts?: Record< string, number >
 }
 
 export function DataTable<TData, TValue>({

@@ -14,9 +14,8 @@ import { MoreHorizontal } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 
 import { Vendor } from "@/lib/types"
+import Link from "next/link"
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 
 export const VendorColumns: ColumnDef<Vendor>[] = [
       {
@@ -32,6 +31,7 @@ export const VendorColumns: ColumnDef<Vendor>[] = [
       />
     ),
     cell: ({ row }) => (
+      
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -69,7 +69,9 @@ export const VendorColumns: ColumnDef<Vendor>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original
+      const vendorId = row.original.id;
+      console.log(vendorId);
+      
  
       return (
         <DropdownMenu>
@@ -81,11 +83,10 @@ export const VendorColumns: ColumnDef<Vendor>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
+            <Link href={`/vendors/${vendorId}/edit`}>
+            <DropdownMenuItem>
+              Edit vendor
+            </DropdownMenuItem></Link>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View customer</DropdownMenuItem>
             <DropdownMenuItem>View payment details</DropdownMenuItem>

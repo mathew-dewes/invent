@@ -25,6 +25,26 @@ const vendors = await prisma.vendor.findMany({
 return vendors;
 
 
+};
+
+
+export async function getVendorById(id: string){
+    const userId = await getUserId();
+const vendor = await prisma.vendor.findUnique({
+    where: {
+        userId, id
+    },
+    select:{
+        id: true,
+        name: true,
+        address: true,
+        phone: true,
+        email: true,
+        contactName: true
+    },
+});
+
+return vendor;
 }
 
 export async function getVendorNames(){
