@@ -40,4 +40,42 @@ export async function createVendor(values: z.infer<typeof vendorSchema>){
     throw error;
         
     }
+};
+
+
+export async function updateVendor(values: z.infer<typeof vendorSchema>, vendorId:string){
+
+    const userId = await getUserId();
+
+    try {
+        const parsed = vendorSchema.safeParse(values);
+    if (!parsed.success) {
+           console.error('Validation errors:', parsed.error);
+            throw new Error('Validation failed');
+        };
+
+        const { name, address, email, phone, contactName } = parsed.data;
+
+    await prisma.vendor.update({
+        data:{
+            name,
+            address,
+            email,
+            phone,
+            contactName,
+            userId
+        },
+        where:{id: vendorId}
+    });
+
+    revalidatePath('/vendors')
+
+
+    } catch (error) {
+    console.error('Create vendor error:', error);
+    throw error;
+        
+    }
 }
+
+
