@@ -21,10 +21,21 @@ const purchaseFilters = [
     {filter:"DELAYED", label: "Delayed"},
 ];
 
-export default function TableFilters(){
+export default function TableFilters({
+  queryCounts = { out: 0, low: 0, good: 0 },
+}: {
+  queryCounts?: Record<string, number>;
+}){
       const searchParams = useSearchParams();
       const pathname = usePathname();
       const { replace } = useRouter();
+
+      console.log(queryCounts);
+      
+
+     
+      
+      
       const filterKey = getFilterKey(pathname);
       if (pathname.startsWith("/vendors") || !filterKey) return;
 
@@ -40,9 +51,12 @@ export default function TableFilters(){
           } else if (pathname === "/purchases"){
             return purchaseFilters
           }
+          return []
       }
 
   const filters = generateFilters(pathname);
+
+  
       
       function setQueryFilter(term: string, filter: string){
    const params = new URLSearchParams(searchParams);
@@ -60,15 +74,23 @@ export default function TableFilters(){
         replace(pathname)
       }
 
+     const visibleFilters =  
+     pathname === "/stock" || "/requests" || "/purchases" ?
 
+     filters.filter(
+        f => (queryCounts[f.filter as keyof typeof queryCounts] ?? 0) > 0
+      ): filters;
 
       
     return (
         <div className="flex gap-4">
       <Button variant={activeQuery ? "outline" : "default"} onClick={clearQuery}>All</Button>
-      {filters?.map((filter, key)=>{
+      {visibleFilters?.map((filter, key)=>{     
+        const query = filter.filter;
+      
+
         return   <Button 
-        onClick={()=>setQueryFilter(filter.filter, filterKey!)} 
+        onClick={()=>setQueryFilter(query, filterKey!)} 
         key={key} 
         variant={ filter.filter !== searchParams.get(filterKey!) ? "outline" : "default"}
         >{filter.label}</Button>

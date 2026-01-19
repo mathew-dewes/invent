@@ -21,6 +21,7 @@ import { startTransition } from "react"
 import { changeRequestStatus } from "@/lib/actions/request"
 import { toast } from "sonner"
 import { adjustInventory } from "@/lib/actions/stock"
+import Link from "next/link"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -111,9 +112,9 @@ export const Requestcolumns: ColumnDef<Request>[] = [
 
       const requestId = row.original.id;
       const stockId = row.original.stockItem.id;
-      const stockQuantity = row.original.stockItem.quantity;
+      // const stockQuantity = row.original.stockItem.quantity;
       const requestQuantity = row.original.quantity;
-      const stockItem = row.original.stockItem.name;
+      // const stockItem = row.original.stockItem.name;
 
 
 
@@ -187,7 +188,8 @@ export const Requestcolumns: ColumnDef<Request>[] = [
 
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit request</DropdownMenuItem>
+            <Link href={`/requests/${requestId}/edit`}><DropdownMenuItem>Edit request</DropdownMenuItem></Link>
+  
             <DropdownMenuItem>Cancel request</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

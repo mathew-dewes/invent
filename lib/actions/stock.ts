@@ -70,18 +70,7 @@ export async function updateStock(values: z.infer<typeof stockSchema>, stockId: 
         };
 
         const { name, brand, location, quantity, vendorId, unitCost, partNumber, maxStock, reorderPoint } = parsed.data;
-        console.log({
-            name,
-            brand,
-            location,
-            quantity,
-            vendorId,
-            unitCost,
-            partNumber,
-            maxStock,
-            reorderPoint,
-            userId
-        });
+
         await prisma.stock.update({
             data: {
                 name,

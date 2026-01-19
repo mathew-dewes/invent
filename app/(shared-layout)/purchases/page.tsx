@@ -12,10 +12,7 @@ export default  async function RequestsPage({searchParams}:
 
       const filters = ((await searchParams).status);
 
-      console.log(filters);
-      
-
-    
+        
     return (
         <div>
   <div className="flex justify-between">

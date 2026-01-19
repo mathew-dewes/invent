@@ -31,13 +31,15 @@ import TableFilters from "../TableFilters"
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[],
-  filter: string
+  filter: string,
+  queryCounts: Record< string, number >
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  filter
+  filter,
+  queryCounts
 }: DataTableProps<TData, TValue>) {
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -77,7 +79,7 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
- <TableFilters/>
+ <TableFilters queryCounts={queryCounts}/>
    
           </div>
 

@@ -22,7 +22,7 @@ export async function createRequest(values: z.infer<typeof requestSchema>) {
 
         const requestNumber = await generateRequestNumber();
 
-        const {customer, plant: plantNumber, quantity, status, stockItem: stockId, notes} = parsed.data;
+        const {customer, plant: plantNumber, quantity, stockItem: stockId, notes} = parsed.data;
 
         await prisma.request.create({
             data:{
@@ -30,7 +30,7 @@ export async function createRequest(values: z.infer<typeof requestSchema>) {
                 stockId,
                 quantity: Number(quantity),
                 plantNumber,
-                status,
+                status: "OPEN",
                 requestNumber,
                 userId,
                 note: notes
@@ -48,6 +48,48 @@ export async function createRequest(values: z.infer<typeof requestSchema>) {
     }
 
   
+};
+
+
+export async function updateRequest(values: z.infer<typeof requestSchema>, requestId: string){
+       const userId = await getUserId();
+
+    try {
+        const parsed = requestSchema.safeParse(values);
+
+        if (!parsed.success) {
+            console.error('Validation errors:', parsed.error);
+            throw new Error('Validation failed');
+        };
+
+        const requestNumber = await generateRequestNumber();
+
+        const {customer, plant: plantNumber, quantity, stockItem: stockId, notes} = parsed.data;
+
+        await prisma.request.update({
+            data:{
+                customer,
+                stockId,
+                quantity: Number(quantity),
+                plantNumber,
+
+                requestNumber,
+                userId,
+                note: notes
+            },
+            where:{id: requestId}
+        })
+        
+
+        revalidatePath('/requests');
+
+
+    } catch (error) {
+        console.error('Create request error:', error);
+        throw error;
+
+    }
+
 }
 
 export async function generateRequestNumber(): Promise<number>{

@@ -65,6 +65,58 @@ if (filter === "OPEN"){
 
 }
 
+
+export async function getRequestsByStatusCount(){
+        const userId = await getUserId();
+
+        const requests = await prisma.request.findMany({
+            select:{
+                status:true
+            },
+            where:{userId}
+        });
+
+
+        const queryCounts = {
+            OPEN:requests.filter(q => q.status === "OPEN").length,
+            PENDING: requests.filter(q => q.status === "PENDING").length,
+            READY: requests.filter(q => q.status === "READY").length,
+            COMPLETE: requests.filter(q => q.status === "COMPLETE").length
+        }
+
+          return queryCounts
+}
+
+export async function getRequestById(id: string){
+    const userId = await getUserId();
+const requests = await prisma.request.findUnique({
+    where: {
+        userId, id
+    },
+
+    select:{
+        id: true,
+        requestNumber: true,
+        createdAt: true,
+        customer: true,
+        stockItem:{
+            select:{
+                id: true,
+                name:true,
+                quantity:true
+            }
+        },
+        quantity: true,
+        status: true,
+        plantNumber: true,
+        note: true
+    }
+
+});
+
+return requests;
+}
+
 export async function getCompletedRequests(){
     const userId = await getUserId();
 const stock = await prisma.request.findMany({
