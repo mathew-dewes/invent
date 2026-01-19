@@ -55,3 +55,26 @@ export async function getPurchases(filter?: PurchaseStatus){
     }
 
 }
+
+
+export async function getPurchaseStatusCount(){
+        const userId = await getUserId();
+
+        const requests = await prisma.purchase.findMany({
+            select:{
+                status:true
+            },
+            where:{userId}
+        });
+
+
+        const queryCounts = {
+            PLACED:requests.filter(q => q.status === "PLACED").length,
+            DELAYED: requests.filter(q => q.status === "DELAYED").length,
+            RECEIVED: requests.filter(q => q.status === "RECEIVED").length,
+        
+        }
+
+          return queryCounts
+
+}

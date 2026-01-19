@@ -63,12 +63,16 @@ export const Requestcolumns: ColumnDef<Request>[] = [
       const date = new Date(getValue() as string);
       return date.toLocaleString("en-NZ", {
         year: "numeric",
-        month: "short",
+        month: "numeric",
         day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
       });
     },
+  },
+
+    {
+    accessorKey: "status",
+    cell: ({ row }) => <StockStatusBadge status={row.getValue("status") as StockStatus} />,
+    header: "Status",
   },
   {
     accessorKey: "customer",
@@ -88,11 +92,7 @@ export const Requestcolumns: ColumnDef<Request>[] = [
       return <div className="font-medium">{amount}</div>
     },
   },
-  {
-    accessorKey: "status",
-    cell: ({ row }) => <StockStatusBadge status={row.getValue("status") as StockStatus} />,
-    header: "Status",
-  },
+
 
   {
     accessorKey: "plantNumber",

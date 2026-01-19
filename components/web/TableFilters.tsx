@@ -30,10 +30,7 @@ export default function TableFilters({
       const pathname = usePathname();
       const { replace } = useRouter();
 
-      console.log(queryCounts);
-      
-
-     
+   
       
       
       const filterKey = getFilterKey(pathname);
@@ -81,10 +78,14 @@ export default function TableFilters({
         f => (queryCounts[f.filter as keyof typeof queryCounts] ?? 0) > 0
       ): filters;
 
+      console.log(visibleFilters.length);
+      
+
       
     return (
         <div className="flex gap-4">
-      <Button variant={activeQuery ? "outline" : "default"} onClick={clearQuery}>All</Button>
+          {visibleFilters.length > 1 && <Button variant={activeQuery ? "outline" : "default"} onClick={clearQuery}>All</Button>}
+
       {visibleFilters?.map((filter, key)=>{     
         const query = filter.filter;
       

@@ -59,7 +59,7 @@ export const Purchasecolumns: ColumnDef<Purchase>[] = [
       const date = new Date(getValue() as string);
       return date.toLocaleString("en-NZ", {
         year: "numeric",
-        month: "short",
+        month: "numeric",
         day: "numeric",
     
       });
