@@ -59,9 +59,9 @@ return sum + item.quantity
         </div>
 
       </CardContent>
-      <CardFooter className="flex-col gap-2">
+      <CardFooter className="flex-col gap-2 items-start">
       
-            <Link className={cn(buttonVariants({variant: "default"}), 'w-full') } href={href}>View stock</Link>
+            <Link className={cn(buttonVariants({variant: "outline"}),) } href={href}>View stock</Link>
    
       
 
