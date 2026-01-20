@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { updatePurchase } from "@/lib/actions/purchase";
 import { purchaseSchema } from "@/lib/schemas";
-import { SingleRequest } from "@/lib/types";
+import { Purchase } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -25,7 +25,7 @@ import z from "zod";
 
 
 export default function EditPurchaseForm({stock, values, purchaseId}:
-    {stock: {id: string, name: string}[], values: SingleRequest, purchaseId: string}
+    {stock: {id: string, name: string}[], values: Purchase, purchaseId: string}
 ){
         const [isPending, startTransition] = useTransition();
          const router = useRouter()
@@ -37,7 +37,7 @@ export default function EditPurchaseForm({stock, values, purchaseId}:
                 item: values.stockItem.id,
                 quantity: String(values.quantity),
                 poNumber: values.PO,
-                notes: values.note ?? ""
+                notes: values.notes ?? ""
     
     
             }

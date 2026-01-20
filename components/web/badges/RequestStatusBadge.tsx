@@ -1,6 +1,7 @@
 
 import { Badge } from "@/components/ui/badge";
-import { RequestStatus } from "@/lib/types";
+import { RequestStatus } from "@/generated/prisma/enums";
+
 
 import { cn, setStatusColor } from "@/lib/utils";
 
