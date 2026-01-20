@@ -10,6 +10,10 @@ export default async function RequestTable({filter}:
     const requests = await getRequests(filter);
     const statusCounts = await getRequestsByStatusCount();
     return (
-        <DataTable filter="customer" columns={Requestcolumns} data={requests} queryCounts={statusCounts}/>
+        <div>
+  <DataTable filter="customer" columns={Requestcolumns} data={requests} queryCounts={statusCounts}/>
+   
+        </div>
+      
     )
 }

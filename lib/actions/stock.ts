@@ -99,6 +99,12 @@ export async function updateStock(values: z.infer<typeof stockSchema>, stockId: 
     
 }
 
+export async function bulkUpdateStock(formData: FormData){
+      const stockIds = formData.getAll("ids") as string[]
+console.log(stockIds);
+
+}
+
 export async function deleteStock(formData: FormData) {
     const stockId = formData.get("id") as string
     const userId = await getUserId();

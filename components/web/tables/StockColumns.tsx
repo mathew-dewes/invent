@@ -11,9 +11,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal } from "lucide-react"
-import { Checkbox } from "@/components/ui/checkbox"
-
-
 import { Stock, StockStatus } from "@/lib/types"
 import StockStatusBadge from "../badges/StockStatusBadge"
 import { generateStockStatus } from "@/lib/helpers"
@@ -27,33 +24,17 @@ import Link from "next/link"
 
 
 export const Stockcolumns: ColumnDef<Stock>[] = [
+  
       {
     id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
+    
   },
   {
     accessorKey: "name",
 
     header: "Item",
   },
+  
   { 
 
     cell:({row}) => {
@@ -132,12 +113,18 @@ export const Stockcolumns: ColumnDef<Stock>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <Link href={`/stock/${stockId}/edit`}><DropdownMenuItem>Edit Stock</DropdownMenuItem></Link>
-                      
-            <DropdownMenuItem asChild>
+
+            <DropdownMenuItem>
+              <Link href={`/purchases/new?reorder=${stockId}`}>Reorder stock</Link>
+              </DropdownMenuItem> 
+
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Copy vendor email</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
 
 
               <form action={
-                (formData)=>{
+                (formData: FormData)=>{
                   startTransition(async()=>{
                     try {
                         await deleteStock(formData);
@@ -157,9 +144,6 @@ export const Stockcolumns: ColumnDef<Stock>[] = [
 
               
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Copy vendor email</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
