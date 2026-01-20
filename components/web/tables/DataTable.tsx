@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import {
   ColumnDef,
   flexRender,
@@ -27,6 +26,15 @@ import {
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import TableFilters from "../TableFilters"
+import { MassUpdateButton } from "../MassUpdateButton"
+import { useState } from "react"
+import { usePathname } from "next/navigation";
+import { PurchaseStatus, RequestStatus } from "@/generated/prisma/enums"
+import { delay } from "@/lib/helpers"
+
+const requestStatuses = Object.values(RequestStatus);
+const purchaseStatuses = Object.values(PurchaseStatus);
+
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -35,20 +43,46 @@ interface DataTableProps<TData, TValue> {
   queryCounts?: Record< string, number >
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends { id: string }, TValue>({
   columns,
   data,
   filter,
   queryCounts
 }: DataTableProps<TData, TValue>) {
 
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-   const [rowSelection, setRowSelection] = React.useState({});
-     const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [rowSelection, setRowSelection] = useState({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+
+
+   const pathname = usePathname();
+  
+   function generateSelectedTable(){
+    if (pathname === "/requests") return 'Requests';
+    if (pathname === "/purchases") return 'Purchases';
+    return null
+   
+
+   
+   };
+
+   function generateStatuses(table: string){
+    if (table === "Requests") return requestStatuses;
+    if (table === "Purchases") return purchaseStatuses;
+     return null
+   
+    
+  }
+
+   const selectedTable = generateSelectedTable();
+   const statuses = generateStatuses(selectedTable!)
+   
+
+   
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
+    getRowId: (row) => row.id, 
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
@@ -65,7 +99,14 @@ export function DataTable<TData, TValue>({
       rowSelection,
       columnVisibility
     },
-  })
+  });
+
+  const selectedStockIds = table
+  .getSelectedRowModel()
+  .rows
+  .map((row) => row.original.id);
+
+
 
   return (
     <div>
@@ -181,6 +222,23 @@ export function DataTable<TData, TValue>({
           Next
         </Button>
       </div>
+      {selectedStockIds.length > 0 && selectedTable &&
+           <div>
+                    <p>Update (All) selected:</p>
+                    <div onClick={async() =>{
+                      await delay(500)
+                      table.setRowSelection({})
+                    } } className="mt-2 flex gap-5">
+                      {statuses?.map((status, key)=>{
+                        return  <MassUpdateButton key={key} table={selectedTable} status={status} selectedIds={selectedStockIds} label={ "MARK "+ status}/>
+                      })}
+          
+          
+                    </div>
+
+               </div>}
+      
+
     </div>
    
     

@@ -23,8 +23,8 @@ import z from "zod";
 
 
 
-export default function PurchaseForm({stock}:
-    {stock: {id: string, name: string}[]}
+export default function PurchaseForm({stock, reorderStockId}:
+    {stock: {id: string, name: string}[], reorderStockId?: string}
 ){
         const [isPending, startTransition] = useTransition();
          const router = useRouter()
@@ -33,7 +33,7 @@ export default function PurchaseForm({stock}:
         const form = useForm({
             resolver: zodResolver(purchaseSchema),
             defaultValues: {
-                item: "",
+                item: reorderStockId,
                 quantity: "",
                 poNumber: "",
                 notes: undefined

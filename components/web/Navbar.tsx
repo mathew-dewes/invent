@@ -25,7 +25,6 @@ export function Navbar() {
 
      const pathname = usePathname();
 
-     console.log(pathname);
 
      const generateStyling = (link: string) =>{
         if (!pathname.startsWith(link)){

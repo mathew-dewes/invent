@@ -107,6 +107,36 @@ export async function updatePurchase(values: z.infer<typeof purchaseSchema>, pur
     }
 }
 
+export async function massUpdatePurchase(purchaseIds: string[], status:  PurchaseStatus | null){
+
+    if (!status || purchaseIds.length === 0) return
+
+       const userId = await getUserId();
+
+    try {
+    
+
+        await prisma.purchase.updateMany({
+            data:{
+             status: status as PurchaseStatus
+            },
+            where:{id: {in: purchaseIds}, userId },
+            
+            
+        })
+        
+
+        revalidatePath('/purchases');
+
+
+    } catch (error) {
+        console.error('Update purchase error:', error);
+        throw error;
+
+    }
+
+}
+
 export async function generatePurchaseNumber(): Promise<number>{
   let unique = false;
   let purchaseNumber = 0;

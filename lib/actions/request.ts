@@ -88,6 +88,36 @@ export async function updateRequest(values: z.infer<typeof requestSchema>, reque
 
     }
 
+};
+
+export async function massUpdateRequests(requestsIds: string[], status: RequestStatus){
+
+    if (!status || requestsIds.length === 0) return
+
+       const userId = await getUserId();
+
+    try {
+    
+
+        await prisma.request.updateMany({
+            data:{
+             status: status as RequestStatus
+            },
+            where:{id: {in: requestsIds}, userId },
+            
+            
+        })
+        
+
+        revalidatePath('/requests');
+
+
+    } catch (error) {
+        console.error('Create request error:', error);
+        throw error;
+
+    }
+
 }
 
 export async function generateRequestNumber(): Promise<number>{

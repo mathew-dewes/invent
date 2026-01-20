@@ -27,9 +27,12 @@ import Link from "next/link"
 
 
 export const Stockcolumns: ColumnDef<Stock>[] = [
+  
       {
     id: "select",
+    
     header: ({ table }) => (
+      
       <Checkbox
         checked={
           table.getIsAllPageRowsSelected() ||
@@ -54,6 +57,7 @@ export const Stockcolumns: ColumnDef<Stock>[] = [
 
     header: "Item",
   },
+  
   { 
 
     cell:({row}) => {
@@ -132,12 +136,18 @@ export const Stockcolumns: ColumnDef<Stock>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <Link href={`/stock/${stockId}/edit`}><DropdownMenuItem>Edit Stock</DropdownMenuItem></Link>
-                      
-            <DropdownMenuItem asChild>
+
+            <DropdownMenuItem>
+              <Link href={`/purchases/new?reorder=${stockId}`}>Reorder stock</Link>
+              </DropdownMenuItem> 
+
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Copy vendor email</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
 
 
               <form action={
-                (formData)=>{
+                (formData: FormData)=>{
                   startTransition(async()=>{
                     try {
                         await deleteStock(formData);
@@ -157,9 +167,6 @@ export const Stockcolumns: ColumnDef<Stock>[] = [
 
               
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Copy vendor email</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
