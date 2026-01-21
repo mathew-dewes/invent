@@ -16,8 +16,7 @@ export default  async function RequestsPage({searchParams}:
         
     return (
         <div>
-  <div className="flex justify-between">
-      <h1 className="font-bold text-2xl" >Purchases</h1>
+  <div className="flex justify-end">
       <Link href={'/purchases/new'}><Button>Create Purchase</Button></Link>
        
       </div>

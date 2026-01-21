@@ -106,3 +106,27 @@ export async function getPurchaseStatusCount(){
           return queryCounts
 
 }
+
+export async function getPuchaseCardData(){
+        const userId = await getUserId();
+    const request = await prisma.purchase.findMany({
+        where:{userId},
+        select:{
+            status:true,
+            quantity:true,
+            stockItem:{
+                select:{
+                    name:true,
+                    vendor:{
+                        select:{
+                            name:true
+                        }
+                    }
+                  
+                }
+            }
+        }
+    });
+
+    return request;
+}

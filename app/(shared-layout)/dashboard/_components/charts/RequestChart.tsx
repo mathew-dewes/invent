@@ -54,16 +54,32 @@ function getBarColor(status: RequestStatus) {
 
 
 type Props = {
-  chartData:{name:string, requests: number, status: RequestStatus}[]
+  chartData:{name:string, requests: number, status: RequestStatus}[],
+  activeRequestCount: number
 }
 
-export function RequestChart({chartData}:Props
+
+
+export function RequestChart({chartData, activeRequestCount}:Props
 ) {
+
+
+  const activeMessage = () =>{
+
+    if (activeRequestCount > 0){
+return `You have ${activeRequestCount} requests needing attention`
+    } else{
+      return 'You have no urgent requests at this time. Well done'
+    }
+
+}
   return (
     <Card>
       <CardHeader>
         <CardTitle>Active requests</CardTitle>
-        <CardDescription>You have 33 requests needing attention</CardDescription>
+        <CardDescription>
+          {activeMessage()}
+          </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>

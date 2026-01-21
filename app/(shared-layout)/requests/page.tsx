@@ -13,8 +13,7 @@ export default async function RequestsPage({searchParams}:
 
     return (
         <div>
-    <div className="flex justify-between">
-      <h1 className="font-bold text-2xl" >Requests</h1>
+    <div className="flex justify-end">
       <Link href={'/requests/new'}><Button>Create Request</Button></Link>
         
       </div>

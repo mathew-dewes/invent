@@ -19,8 +19,8 @@ export default async function StockPage({ searchParams }:
   return (
     <div>
 
-      <div className="flex justify-between">
-        <h1 className="font-bold text-2xl" >Stock</h1>
+      <div className="flex justify-end">
+
         <Link href={'/stock/new'}><Button>Create Stock</Button></Link>
 
       </div>

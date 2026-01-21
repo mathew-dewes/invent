@@ -10,8 +10,7 @@ export default  function VendorPage(){
 
     return(
         <div>
-  <div className="flex justify-between">
-      <h1 className="font-bold text-2xl" >Vendors</h1>
+  <div className="flex justify-end">
       <Link href={'/vendors/new'}><Button>Create Vendor</Button></Link>
         
       </div>

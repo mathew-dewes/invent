@@ -57,7 +57,7 @@ const customers = getCustomers();
             {requests.splice(0,3)?.map((request, key)=>{
               return <p key={key}>{request.stockItem.name} - x {request.quantity}</p>
             })}
-            <p>+ {total - 3} more</p>
+            <p className={`${total <= 3 ? "hidden" : ""}`}>+ {total - 3} more</p>
           </div>
        
         
@@ -67,8 +67,8 @@ const customers = getCustomers();
       </CardHeader>
       <CardContent>
     
- <p className="text-sm">
-  Request for{" "}
+ <p className="text-sm text-muted-foreground">
+  <span className="text-white font-medium">Customers:</span> {" "}
   {formatNames(customers.slice(0, 3))}
   {customers.length > 3 && ` and ${customers.length - 3} ${customers.length - 3 == 1 ? "other" : "others"}`}
 </p>

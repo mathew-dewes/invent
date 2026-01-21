@@ -6,27 +6,15 @@ import { getRequestCardData, getRequestChartData } from "@/lib/queries/request";
 
 export default async function Requests() {
 
-    // const data = [
-    //   { name: "Open", requests: 21, status: "OPEN" as RequestStatus  },
-    //   { name: "Pending", requests: 5, status: "PENDING" as RequestStatus  },
-    //   { name: "Ready", requests: 11, status: "READY" as RequestStatus  },
-    
-    
-     
-    // ];
-
 
     const requests = await getRequestCardData();
-    const chartData = await getRequestChartData()
+    const chartData = await getRequestChartData();
 
-    console.log(chartData);
-    
-  
-
+    const urgentRequestCount = requests.filter((i => (i.status !=="COMPLETE" && i.status !== "READY" ))).length
     const completedRequests = requests.filter((i => i.status === "COMPLETE"));
-    const openRequests = requests.filter((i => i.status === "OPEN"))
-    const pendingRequests = requests.filter((i => i.status === "PENDING"))
-    const readyRequests = requests.filter((i => i.status === "READY"))
+    const openRequests = requests.filter((i => i.status === "OPEN"));
+    const pendingRequests = requests.filter((i => i.status === "PENDING"));
+    const readyRequests = requests.filter((i => i.status === "READY"));
   
     
 
@@ -35,7 +23,7 @@ export default async function Requests() {
             <h1 className="font-semibold text-xl py-3 ml-1">Requests</h1>
             <div className="grid grid-cols-4 gap-3">
                 <div className="col-span-2">
-                    <RequestChart chartData={chartData} />
+                    <RequestChart chartData={chartData} activeRequestCount={urgentRequestCount} />
                 </div>
 
                 <div className="col-span-2 flex flex-col gap-5">
