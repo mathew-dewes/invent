@@ -66,6 +66,27 @@ if (filter === "OPEN"){
 }
 
 
+export async function getRequestCardData(){
+    const userId = await getUserId();
+    const request = await prisma.request.findMany({
+        where:{userId},
+        select:{
+            status:true,
+            customer:true,
+            quantity:true,
+            stockItem:{
+                select:{
+                    name:true,
+                  
+                }
+            }
+        }
+    });
+
+    return request;
+}
+
+
 export async function getRequestsByStatusCount(){
         const userId = await getUserId();
 

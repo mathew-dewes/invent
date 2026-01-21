@@ -1,7 +1,7 @@
 "use client"
 
 import { TrendingUp } from "lucide-react"
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
+import { Bar, BarChart, CartesianGrid, Cell, XAxis } from "recharts"
 
 import {
   Card,
@@ -17,23 +17,40 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
+import { RequestStatus } from "@/generated/prisma/enums"
 
 export const description = "A bar chart"
 
-const chartData = [
-  { month: "OPEN", requests: 186 },
-  { month: "PENDING", requests: 305 },
-  { month: "READY", requests: 237 },
-  { month: "COMPLETE", requests: 73 },
-
-]
 
 const chartConfig = {
   desktop: {
     label: "Desktop",
     color: "var(--chart-1)",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
+
+
+const data = [
+  { name: "Open", requests: 21, status: "OPEN" as RequestStatus  },
+  { name: "Pending", requests: 5, status: "PENDING" as RequestStatus  },
+  { name: "Ready", requests: 11, status: "READY" as RequestStatus  },
+
+
+ 
+];
+
+function getBarColor(status: RequestStatus) {
+  switch (status) {
+    case "COMPLETE":
+      return "#86efac";   // green-500
+    case "PENDING":
+      return "#fde047";   // yellow-500
+    case "READY":
+      return "#93c5fd";   // red-500
+    default:
+      return "#fb923c";   // slate-400
+  }
+}
 
 export function RequestChart() {
   return (
@@ -44,10 +61,10 @@ export function RequestChart() {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <BarChart accessibilityLayer data={chartData}>
+          <BarChart accessibilityLayer data={data}>
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="name"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
@@ -57,7 +74,13 @@ export function RequestChart() {
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Bar dataKey="requests" fill="var(--color-desktop)" radius={8} />
+            <Bar dataKey="requests"  radius={8}>
+                          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={getBarColor(entry.status)} />
+          ))}
+            </Bar>
+        
+    
           </BarChart>
         </ChartContainer>
       </CardContent>
