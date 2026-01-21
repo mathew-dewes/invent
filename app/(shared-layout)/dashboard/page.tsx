@@ -15,13 +15,10 @@ export default function page() {
                
                         <Inventory />
                         <Requests />
-                        <Purchases/>
                         <MonthlySpend/>
-                      
-               
-               
-         
-           
+                        <Purchases/>
+            
+       
                 </div>
 
             </Suspense>

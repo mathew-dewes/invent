@@ -21,10 +21,13 @@ import {
 export const description = "A bar chart"
 
 const chartData = [
-  { month: "OPEN", requests: 186 },
-  { month: "PENDING", requests: 305 },
-  { month: "READY", requests: 237 },
-  { month: "COMPLETE", requests: 73 },
+  { vendor: "Warehouse", spend: 32544 },
+    { vendor: "Bunnings", spend: 21554 },
+  { vendor: "PB Tech", spend: 14556 },
+  { vendor: "K Mart", spend: 5325 },
+  { vendor: "Harvey", spend: 3211 },
+
+
 
 ]
 
@@ -33,13 +36,15 @@ const chartConfig = {
     label: "Desktop",
     color: "var(--chart-1)",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
+
+
 
 export function VendorChart() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Active requests by status</CardTitle>
+        <CardTitle>Spend by Vendors</CardTitle>
         <CardDescription>December - January 2026</CardDescription>
       </CardHeader>
       <CardContent>
@@ -47,17 +52,18 @@ export function VendorChart() {
           <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="vendor"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-            //   tickFormatter={(value) => value.slice(0, 3)}
+              
+     
             />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Bar dataKey="requests" fill="var(--color-desktop)" radius={8} />
+            <Bar dataKey="spend" fill="#86efac" radius={8} />
           </BarChart>
         </ChartContainer>
       </CardContent>

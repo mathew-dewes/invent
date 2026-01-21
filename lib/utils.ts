@@ -50,13 +50,14 @@ export function generateStatusColor(status: RequestStatus | InventoryStatus | Pu
             case "COMPLETE":
             case "good":
             case "RECEIVED":
-                color = 'bg-green-300 '
+                color = 'bg-green-300'
                 break;
             case "PENDING":
             case "low":
                 color = 'bg-yellow-300'
                 break;
             case "OPEN":
+            case "DELAYED":
                 color = 'bg-orange-400'
                    break;
             case "READY":
@@ -64,7 +65,6 @@ export function generateStatusColor(status: RequestStatus | InventoryStatus | Pu
                 color = 'bg-blue-300'
                     break;
             case "out":
-            case "DELAYED":
                 color = 'bg-red-400'
                 break;
                          default:
