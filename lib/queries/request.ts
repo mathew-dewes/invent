@@ -86,6 +86,44 @@ export async function getRequestCardData(){
     return request;
 }
 
+export async function getRequestChartData(){
+        const userId = await getUserId();
+
+   const data = await prisma.request.groupBy({
+  by: ["status"],
+  where: { userId },
+  _count: {
+    _all: true,
+  },
+});
+
+const statusMap = {
+  OPEN: "Open",
+  PENDING: "Pending",
+  READY: "Ready",
+
+} as const;
+
+const base = Object.keys(statusMap).map(status => ({
+  name: statusMap[status as keyof typeof statusMap],
+  requests: 0,
+  status: status as RequestStatus,
+}));
+
+const formatted = base.map(item => {
+  const found = data.find(d => d.status === item.status);
+
+  return {
+    ...item,
+    requests: found ? found._count._all : 0,
+  };
+});
+
+return formatted
+}
+
+
+
 
 export async function getRequestsByStatusCount(){
         const userId = await getUserId();

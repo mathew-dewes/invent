@@ -52,16 +52,22 @@ function getBarColor(status: RequestStatus) {
   }
 }
 
-export function RequestChart() {
+
+type Props = {
+  chartData:{name:string, requests: number, status: RequestStatus}[]
+}
+
+export function RequestChart({chartData}:Props
+) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Active requests by status</CardTitle>
-        <CardDescription>December - January 2026</CardDescription>
+        <CardTitle>Active requests</CardTitle>
+        <CardDescription>You have 33 requests needing attention</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <BarChart accessibilityLayer data={data}>
+          <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="name"
