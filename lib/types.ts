@@ -49,7 +49,8 @@ export type Request = {
   id: string,
   createdAt: Date,
   requestNumber: number,
-  customer: string
+  customer: string,
+  status: RequestStatus
   stockItem: {
     id: string
     name: string
