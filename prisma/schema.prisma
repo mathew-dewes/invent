@@ -27,6 +27,7 @@ model User {
   stock         Stock[]
   requests      Request[]
   purchases Purchase[]
+  costLedger CostLedger[]
 
   @@unique([email])
   @@map("user")
@@ -104,11 +105,12 @@ model Stock {
   vendor       Vendor     @relation(fields: [vendorId], references: [id])
   user         User       @relation(fields: [userId], references: [id])
   brand        String
-  unitCost     Int
+  unitCost     Decimal
   maxStock     Int
   reorderPoint Int
   requests     Request[]
   purchases    Purchase[]
+  costLedger CostLedger[]
 }
 
 model Request {
@@ -136,13 +138,41 @@ model Purchase {
 
   stockId  String
   quantity Int
-  totalCost Int
+  totalCost Decimal
   userId String
 
   user User @relation(fields: [userId], references: [id])
   stockItem Stock  @relation(fields: [stockId], references: [id])
 
 }
+
+model CostLedger {
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now())
+  type FinanceType
+
+  requestId String?
+  purchaseId String?
+  stockId String
+  vendorId String?
+  userId String
+
+  plantNumber String?
+  stockName String
+  vendorName String?
+  quantity Int
+  unitCost Decimal
+  totalCost Decimal
+
+  month Int
+  year Int
+
+  user User @relation(fields: [userId], references: [id])
+  stock Stock @relation(fields: [stockId], references: [id])
+
+}
+
+
 
 enum RequestStatus {
   OPEN
@@ -155,4 +185,9 @@ enum PurchaseStatus {
   PLACED
   RECEIVED
   DELAYED
+}
+
+enum FinanceType {
+  REQUEST
+  PURCHASE
 }
