@@ -135,11 +135,20 @@ export function DataTable<TData extends BaseRow, TValue>({
 
 
 const allEqual = (arr: string[]) => arr.every( v => v === arr[0] );
+
+
 const completeSelected = selectedStatuses.includes("COMPLETE");
 
-const onlyCompletedSelected = completeSelected && allEqual(selectedStatuses)
 
-  
+
+
+const openEntries = !selectedStatuses.every(status => [ "RECEIVED", "COMPLETE"].includes(status))
+
+
+
+
+const onlyCompletedSelected = completeSelected && allEqual(selectedStatuses);
+
 
 
 
@@ -269,7 +278,12 @@ const onlyCompletedSelected = completeSelected && allEqual(selectedStatuses)
                       await delay(500)
                       table.setRowSelection({})
                     } } className="mt-2 flex gap-5">
-                      {!onlyCompletedSelected && statuses?.map((status, key)=>{
+                      {openEntries && statuses?.map((status, key)=>{
+
+                        if (selectedStatuses.includes("READY") && status !== "COMPLETE") return
+                        if (selectedStatuses.includes("OPEN") && status !== "READY") return
+                        if (selectedStatuses.includes(status)) return
+                    
 
                         return  <MassUpdateButton key={key} 
                         table={selectedTable} 

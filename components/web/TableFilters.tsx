@@ -36,10 +36,8 @@ export default function TableFilters({
       const filterKey = getFilterKey(pathname);
       if (pathname.startsWith("/vendors") || !filterKey) return;
 
-      const activeQuery = !!searchParams.get(filterKey);
+      // const activeQuery = !!searchParams.get(filterKey);
 
-      console.log(activeQuery);
-      
 
       
 
@@ -84,26 +82,17 @@ export default function TableFilters({
         f => (queryCounts[f.filter as keyof typeof queryCounts] ?? 0) > 0
       ): filters;
 
-      const filterLength = visibleFilters.length;
-
-
-      console.log(filterLength);
-      
-
-
-
- 
-
+  
 
   
       
     return (
         <div className="flex gap-4">
           <Button
-          hidden={filterLength == 1}
+     
            variant={ searchParams.get(filterKey) ? "outline" : "default"}
           onClick={() => clearQuery()}>View All</Button>
-      {filterLength > 1 && visibleFilters.length > 0 && visibleFilters?.map((filter, key)=>{     
+      { visibleFilters.length > 0 && visibleFilters?.map((filter, key)=>{     
         const query = filter.filter;
         return   <Button 
         onClick={()=>{

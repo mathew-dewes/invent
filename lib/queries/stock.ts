@@ -206,69 +206,6 @@ export async function increaseStockQuantity(stockId: string, inceaseAmount: numb
 }
 
 
-export async function massIncreaseStockQuantity(updateData:{
-    id: string | undefined, quantity: number | undefined
-}[]){
-     const userId = await getUserId();
-
-     console.log(updateData);
-
-       const validUpdates = updateData.filter(
-    (item) => typeof item.quantity === "number"
-  );
-
-  console.log(validUpdates);
-
-  const stock = await prisma.stock.findUnique({
-  where: { id: "cmkrkw8xz00027cuhly6juvnp" },
-});
-
-console.log("Stock row:", stock);
-console.log("UserId from auth:", userId);
-  
-
-  try {
-      
-    await Promise.all(
-    validUpdates.map(async (item)=>{
-        const res = await prisma.stock.updateMany({
-            where:{userId, id: item.id},
-            data:{
-                quantity:{
-                    increment: item.quantity
-                }
-            }
-        });
-
-            console.log(
-      `Tried updating stock ${item.id}. Rows affected:`,
-      res
-    );
-    })
-
-    )
-    
-
-
-
-    
-
-            console.log("Stock successfully updated 🚀");
-  } catch (error) {
-
-      console.error("Failed to update stock:", error);
-    
-    
-  }
-
-
-
-
-     
-    
-
-
-}
 
 
 export async function checkInventory(id: string) {

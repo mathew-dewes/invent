@@ -6,7 +6,8 @@ import { getUserId } from "./auth";
 import prisma from "../prisma";
 import { PurchaseStatus } from "@/generated/prisma/enums";
 import { revalidatePath } from "next/cache";
-import { massIncreaseStockQuantity } from "../queries/stock";
+import { massIncreaseStockQuantity } from "./stock";
+
 
 
 export async function createPurchase(values: z.infer<typeof purchaseSchema>){
