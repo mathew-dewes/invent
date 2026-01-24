@@ -203,11 +203,38 @@ export async function increaseStockQuantity(stockId: string, inceaseAmount: numb
 
 }
 
-
-
-
 export async function checkInventory(id: string) {
     return await prisma.stock.count({
         where: { id }
     })
+};
+
+
+export async function returnStock(stockIdsAndQuantity: 
+    {id: string | undefined, quantity: number | undefined}[]){
+console.log(stockIdsAndQuantity);
+        const userId = await getUserId();
+
+try {
+    
+    await Promise.all(
+        stockIdsAndQuantity.map(async(item)=>{
+            await prisma.stock.updateMany({
+                where:{userId, id: item.id},
+                data:{
+                    quantity:{
+                        increment: item.quantity
+                    }
+                }
+            })
+        })
+    )
+
+
+} catch (error) {
+       console.error('Stock return error:', error);
+        throw error;
+}
+
+
 }

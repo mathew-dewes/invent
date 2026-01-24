@@ -136,9 +136,10 @@ export function DataTable<TData extends ParsedDataTypes, TValue>({
     arr.every(v => v === arr[0]);
 
 
+  const selectedStatus = selectedStatuses[0];
+
+
   const completeSelected = selectedStatuses.includes(RequestStatus.COMPLETE);
-
-
 
 
 
@@ -150,6 +151,10 @@ export function DataTable<TData extends ParsedDataTypes, TValue>({
 
 
   const onlyCompletedSelected = completeSelected && allEqual(selectedStatuses);
+
+  
+
+  
 
 
 
@@ -296,7 +301,7 @@ export function DataTable<TData extends ParsedDataTypes, TValue>({
                 stockIdsAndQuantity={stockIdsAndQuantity}
               />
             })}
-            <MassCancelButton selectedIds={selectedStockIds} table="Requests" />
+            <MassCancelButton selectedIds={selectedStockIds} table={selectedTable} status={selectedStatus} stockIdsAndQuantity={stockIdsAndQuantity}  />
 
 
           </div>
