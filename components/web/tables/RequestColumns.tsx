@@ -25,14 +25,11 @@ import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 
 
-const HideCheckboxes = () =>{
+const HideFields = () =>{
   const searchParams = useSearchParams().get('status');
-
-
-  console.log(searchParams);
   
 
-  if (searchParams == "COMPLETE" || !searchParams){
+  if (searchParams == "COMPLETE" && !searchParams){
     return true
   } else{
 
@@ -48,7 +45,7 @@ export const Requestcolumns: ColumnDef<Request>[] = [
     id: "select",
     header: ({ table }) => (
       <Checkbox
-        hidden={HideCheckboxes()}
+        hidden={HideFields()}
         checked={
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -59,7 +56,7 @@ export const Requestcolumns: ColumnDef<Request>[] = [
     ),
     cell: ({ row }) => (
       <Checkbox
-        hidden={HideCheckboxes()}
+        hidden={HideFields()}
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
@@ -103,21 +100,29 @@ export const Requestcolumns: ColumnDef<Request>[] = [
   },
   {
     accessorKey: "quantity",
-    header: () => <div>Requested</div>,
+    header: () => <div className={`${HideFields() ? "hidden" : ""}`}>Requested</div>,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("quantity"))
-      return <div className="font-medium">{amount}</div>
+      const amount = parseFloat(row.getValue("quantity"));
+    const stockQuantity = row.original.stockItem?.quantity ?? 0;
+          const requestQuantity = row.original.quantity;
+          const status = row.original.status;
+
+
+
+      
+      return <div className={`${status == "COMPLETE" ? "hidden" : requestQuantity > stockQuantity ? "text-red-400" : ""}`}>{amount}</div>
     },
   },
+
+
   {
     accessorKey: "stockItem.quantity",
-    header: () => <div>Stock QTY</div>,
+    header: () => <div className={`${HideFields() ? "hidden" : ""}`}>Stock QTY</div>,
     cell: ({ row }) => {
-          const stockCount = row.original.stockItem?.quantity ?? 0;
-          console.log(row.original);
-          
-
-      return <div className="font-medium text-red-400">{stockCount}</div>
+          const stockQuantity = row.original.stockItem?.quantity ?? 0;
+  
+        
+      return <div className={'font-medium'}>{stockQuantity}</div>
     },
   },
 
@@ -142,6 +147,9 @@ export const Requestcolumns: ColumnDef<Request>[] = [
       const stockId = row.original.stockItem.id;
       const requestQuantity = row.original.quantity;
       const requestStatus = row.original.status;
+      const stockQuantity = row.original.stockItem?.quantity ?? 0;
+    
+
 
 
 
@@ -154,10 +162,11 @@ export const Requestcolumns: ColumnDef<Request>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+      
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+      
 
-
-            <DropdownMenuItem className={`${["READY", "COMPLETE"].includes(requestStatus) ? "hidden" : ""}`} asChild>
+            <DropdownMenuItem className={`${["READY", "COMPLETE"].includes(requestStatus) || requestQuantity > stockQuantity ? "hidden" : ""}`} asChild>
 
 
               <form action={
