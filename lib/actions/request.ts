@@ -5,7 +5,9 @@ import { requestSchema } from "../schemas";
 import { getUserId } from "./auth";
 import prisma from "../prisma";
 import { revalidatePath } from "next/cache";
-import { RequestStatus } from "@/generated/prisma/enums";
+import { FinanceType, RequestStatus } from "@/generated/prisma/enums";
+import { Purchase, Request } from "@/generated/prisma/client";
+import { Decimal } from "@prisma/client/runtime/client";
 
 export async function createRequest(values: z.infer<typeof requestSchema>) {
 
@@ -21,10 +23,10 @@ export async function createRequest(values: z.infer<typeof requestSchema>) {
 
         const requestNumber = await generateRequestNumber();
 
-        const {customer, plant: plantNumber, quantity, stockItem: stockId, notes} = parsed.data;
+        const { customer, plant: plantNumber, quantity, stockItem: stockId, notes } = parsed.data;
 
         await prisma.request.create({
-            data:{
+            data: {
                 customer,
                 stockId,
                 quantity: Number(quantity),
@@ -35,7 +37,7 @@ export async function createRequest(values: z.infer<typeof requestSchema>) {
                 note: notes
             }
         })
-        
+
 
         revalidatePath('/requests');
 
@@ -46,12 +48,12 @@ export async function createRequest(values: z.infer<typeof requestSchema>) {
 
     }
 
-  
+
 };
 
 
-export async function updateRequest(values: z.infer<typeof requestSchema>, requestId: string){
-       const userId = await getUserId();
+export async function updateRequest(values: z.infer<typeof requestSchema>, requestId: string) {
+    const userId = await getUserId();
 
     try {
         const parsed = requestSchema.safeParse(values);
@@ -63,10 +65,10 @@ export async function updateRequest(values: z.infer<typeof requestSchema>, reque
 
 
 
-        const {customer, plant: plantNumber, quantity, stockItem: stockId, notes} = parsed.data;
+        const { customer, plant: plantNumber, quantity, stockItem: stockId, notes } = parsed.data;
 
         await prisma.request.update({
-            data:{
+            data: {
                 customer,
                 stockId,
                 quantity: Number(quantity),
@@ -74,9 +76,9 @@ export async function updateRequest(values: z.infer<typeof requestSchema>, reque
                 userId,
                 note: notes
             },
-            where:{id: requestId}
+            where: { id: requestId }
         })
-        
+
 
         revalidatePath('/requests');
 
@@ -89,43 +91,43 @@ export async function updateRequest(values: z.infer<typeof requestSchema>, reque
 
 };
 
-export async function cancelRequest(formData: FormData){
-const userId = await getUserId();
-const requestId = formData.get("requestId") as string;
+export async function cancelRequest(formData: FormData) {
+    const userId = await getUserId();
+    const requestId = formData.get("requestId") as string;
 
 
 
 
-if (!userId || !requestId) return;
+    if (!userId || !requestId) return;
 
-try {
-    await prisma.request.delete({
-        where:{userId, id: requestId}
-    });
+    try {
+        await prisma.request.delete({
+            where: { userId, id: requestId }
+        });
 
-    revalidatePath('/requests')
-} catch (error) {
-      console.error('Cancel request error:', error);
+        revalidatePath('/requests')
+    } catch (error) {
+        console.error('Cancel request error:', error);
         throw error;
-}
- 
-    
+    }
+
+
 
 }
 
-export async function cancelRequests(requestIds: string[]){
+export async function cancelRequests(requestIds: string[]) {
     const userId = await getUserId();
 
     if (!requestIds) return;
 
     try {
         await prisma.request.deleteMany({
-            where:{id: {in: requestIds}, userId}
+            where: { id: { in: requestIds }, userId }
         });
 
-revalidatePath('/requests');
+        revalidatePath('/requests');
     } catch (error) {
-            console.error('Create request error:', error);
+        console.error('Create request error:', error);
         throw error;
     }
 
@@ -135,44 +137,61 @@ revalidatePath('/requests');
 
 
 
-export async function updateRequestStatus(requestsIds: string[], status: RequestStatus){
-       const userId = await getUserId();
+export async function updateRequestStatus(selectedIds: string[], status: RequestStatus) {
+    const userId = await getUserId();
 
-       try {
-              await prisma.request.updateMany({
-            data:{
-             status: status as RequestStatus,
 
-             
-             
+    try {
+
+
+        if (status == "COMPLETE") {
+
+            await Promise.all(
+                selectedIds.map(async (id) => {
+                    await createLedger("REQUEST", id)
+
+
+                })
+
+            )
+
+
+        }
+        await prisma.request.updateMany({
+            data: {
+                status: status as RequestStatus,
+
+
+
             },
-            where:{id: {in: requestsIds}, userId, 
-            
-  },
-            
-            
+            where: {
+                id: { in: selectedIds }, userId,
+
+            },
+
+
         });
 
-           revalidatePath('/requests');
-       } catch (error) {
-             console.error('Create request error:', error);
+        revalidatePath('/requests');
+    } catch (error) {
+        console.error('Create request error:', error);
         throw error;
-       }
-
-
     }
 
 
+}
 
-    export async function changeRequestStatus(requestId: string, status: RequestStatus){
+
+
+export async function changeRequestStatus(requestId: string, status: RequestStatus) {
     const userId = await getUserId();
 
     if (!requestId || !userId) return;
 
     try {
         await prisma.request.update({
-            where:{id: requestId, userId},
-            data:{status}
+            where: { id: requestId, userId },
+            data: { status }
         });
 
         revalidatePath('/requests');
@@ -180,62 +199,157 @@ export async function updateRequestStatus(requestsIds: string[], status: Request
             success: true
         }
     } catch (error) {
-         console.error('Request update error:', error);
+        console.error('Request update error:', error);
         throw error;
     }
 
-         
-    
-    
 
 
-          
+
+
+
+
 }
 
-export async function markRequestReady(requestsIds: string[], status: RequestStatus = "READY", stockIdsAndQuantity: 
-    {id: string | undefined, quantity: number | undefined}[]){
-     if (!status || requestsIds.length === 0) return;
-        const userId = await getUserId();
+export async function markRequestReady(requestsIds: string[], status: RequestStatus = "READY", stockIdsAndQuantity:
+    { id: string | undefined, quantity: number | undefined }[]) {
+    if (!status || requestsIds.length === 0) return;
+    const userId = await getUserId();
 
-if (status == "READY"){
+    if (status == "READY") {
 
         await Promise.all(
-            stockIdsAndQuantity.map(async(item)=>{
-               await prisma.stock.updateMany({
-                        where: {id: item.id, userId},
-                        data:{
-                            quantity:{
-                                decrement: item.quantity
-                            },
-                            
+            stockIdsAndQuantity.map(async (item) => {
+                await prisma.stock.updateMany({
+                    where: { id: item.id, userId },
+                    data: {
+                        quantity: {
+                            decrement: item.quantity
                         },
-                    
-                    }
-                    )
-         
-                    
+
+                    },
+
+                }
+                )
+
+
             })
-            
+
         )
-}
+    }
 
 }
 
-export async function generateRequestNumber(): Promise<number>{
-  let unique = false;
-  let requestNumber = 0;
+export async function createLedger(type: FinanceType, recordId: string) {
+    const userId = await getUserId();
 
-  while (!unique){
-    requestNumber = Math.floor(Math.random() * 99999) + 1
+    if (type == "REQUEST") {
+        const request = await prisma.request.findUnique({
+            where: { id: recordId, userId },
+            include: {
+                stockItem: {
+                    include: {
+                        vendor: true
+                    }
+                },
+            }
 
-    const existing = await prisma.request.findUnique({
-        where: {requestNumber}
-    });
+        });
 
-    if (!existing) unique = true;
+      
+        
+
+        const stockName = request?.stockItem.name;
+        const vendorName = request?.stockItem.vendor.name;
+        const unitCost = request?.stockItem.unitCost;
+
+        if (!request || !stockName || !vendorName || !unitCost) return
 
 
-  }
+        await createRequestLedger(request, stockName, vendorName, unitCost,)
+    
+    } else {
+
+        console.log(recordId);
+        
+
+        const purchase = await prisma.purchase.findUnique({
+            where: { userId, id: recordId },
+            include: { stockItem: true, vendor: true }
+        });
+
+    
+        
+
+        const stockName = purchase?.stockItem.name;
+        const vendorName = purchase?.vendor.name;
+        const unitCost = purchase?.stockItem.unitCost;
+
+        if (!purchase || !stockName || !vendorName || !unitCost) return
+
+        await createPurchaseLedger(purchase, stockName, vendorName, unitCost)
+    }
+
+
+};
+
+export async function createPurchaseLedger(purchase: Purchase, stockName: string, vendorName: string, unitCost: Decimal) {
+    await prisma.costLedger.create({
+        data: {
+            type: "PURCHASE",
+            stockId: purchase.stockId,
+            vendorId: purchase.vendorId,
+            userId: purchase.userId,
+            stockName,
+            vendorName,
+            quantity: purchase.quantity,
+            unitCost,
+            totalCost: purchase.totalCost,
+            month: new Date().getMonth() + 1,
+            year: new Date().getFullYear()
+
+
+
+        }
+    })
+};
+export async function createRequestLedger(request: Request, stockName: string, vendorName: string, unitCost: Decimal) {
+    await prisma.costLedger.create({
+        data: {
+            type: "REQUEST",
+            stockId: request.stockId,
+            requestId:request.id,
+            userId: request.userId,
+            plantNumber: request.plantNumber,
+            stockName,
+            vendorName,
+            quantity: request.quantity,
+            unitCost,
+            totalCost: request.quantity * Number(unitCost),
+            month: new Date().getMonth() + 1,
+            year: new Date().getFullYear()
+
+
+
+        }
+    })
+};
+
+export async function generateRequestNumber(): Promise<number> {
+    let unique = false;
+    let requestNumber = 0;
+
+    while (!unique) {
+        requestNumber = Math.floor(Math.random() * 99999) + 1
+
+        const existing = await prisma.request.findUnique({
+            where: { requestNumber }
+        });
+
+        if (!existing) unique = true;
+
+
+    }
 
 
     return requestNumber
