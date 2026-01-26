@@ -7,10 +7,11 @@ import prisma from "../prisma";
 import { PurchaseStatus } from "@/generated/prisma/enums";
 import { revalidatePath } from "next/cache";
 import { massIncreaseStockQuantity } from "./stock";
+import { createLedger } from "./request";
 
 
 
-export async function createPurchase(values: z.infer<typeof purchaseSchema>){
+export async function createPurchase(values: z.infer<typeof purchaseSchema>) {
 
 
     const userId = await getUserId();
@@ -20,25 +21,26 @@ export async function createPurchase(values: z.infer<typeof purchaseSchema>){
 
 
 
-        
-            if (!parsed.success) {
+
+        if (!parsed.success) {
             console.error('Validation errors:', parsed.error);
             throw new Error('Validation failed');
         };
-            const purchaseNumber = await generatePurchaseNumber();
-            
-                const {item, quantity, poNumber, notes} = parsed.data;
+        const purchaseNumber = await generatePurchaseNumber();
+
+        const { item, quantity, poNumber, notes } = parsed.data;
 
 
-                const stockItem = await prisma.stock.findUnique({
-                    where: {id: item, userId}
-                });
+        const stockItem = await prisma.stock.findUnique({
+            where: { id: item, userId },
+            include: { vendor: true }
+        });
 
-                const totalCost = Number(stockItem!.unitCost)  * Number(quantity);
-    
+        const totalCost = Number(stockItem!.unitCost) * Number(quantity);
+
 
         await prisma.purchase.create({
-            data:{
+            data: {
                 stockId: item,
                 quantity: Number(quantity),
                 purchaseNumber,
@@ -46,7 +48,8 @@ export async function createPurchase(values: z.infer<typeof purchaseSchema>){
                 userId,
                 status: "PLACED",
                 notes,
-                PO: poNumber
+                PO: poNumber,
+                vendorId: stockItem!.vendorId
             }
         })
 
@@ -56,12 +59,12 @@ export async function createPurchase(values: z.infer<typeof purchaseSchema>){
     } catch (error) {
         console.error('Create vendor error:', error);
         throw error;
-        
+
     }
 }
 
 
-export async function updatePurchase(values: z.infer<typeof purchaseSchema>, purchaseId: string){
+export async function updatePurchase(values: z.infer<typeof purchaseSchema>, purchaseId: string) {
 
     const userId = await getUserId();
 
@@ -70,25 +73,25 @@ export async function updatePurchase(values: z.infer<typeof purchaseSchema>, pur
 
 
 
-        
-            if (!parsed.success) {
+
+        if (!parsed.success) {
             console.error('Validation errors:', parsed.error);
             throw new Error('Validation failed');
         };
-    
-            
-                const {item, quantity, poNumber, notes} = parsed.data;
 
 
-                const stockItem = await prisma.stock.findUnique({
-                    where: {id: item}
-                });
+        const { item, quantity, poNumber, notes } = parsed.data;
 
-                const totalCost = Number(stockItem!.unitCost) * Number(quantity);
-    
+
+        const stockItem = await prisma.stock.findUnique({
+            where: { id: item }
+        });
+
+        const totalCost = Number(stockItem!.unitCost) * Number(quantity);
+
 
         await prisma.purchase.update({
-            data:{
+            data: {
                 stockId: item,
                 quantity: Number(quantity),
                 totalCost,
@@ -96,7 +99,7 @@ export async function updatePurchase(values: z.infer<typeof purchaseSchema>, pur
                 notes,
                 PO: poNumber
             },
-        where:{id: purchaseId}
+            where: { id: purchaseId }
         })
 
 
@@ -105,34 +108,47 @@ export async function updatePurchase(values: z.infer<typeof purchaseSchema>, pur
     } catch (error) {
         console.error('Create vendor error:', error);
         throw error;
-        
+
     }
 }
 
-export async function massUpdatePurchase(stockIds: string[], status:  PurchaseStatus | null, stockIdsAndQuantity: 
-    {id: string | undefined, quantity: number | undefined}[]){
+export async function massUpdatePurchase(stockIds: string[], status: PurchaseStatus | null, stockIdsAndQuantity:
+    { id: string | undefined, quantity: number | undefined }[]) {
 
     if (!status || stockIds.length === 0) return
 
-       const userId = await getUserId();
+    const userId = await getUserId();
 
-    
+
 
     try {
 
-            if (status === "RECEIVED"){
-        // increase stock QTY
-        await massIncreaseStockQuantity(stockIdsAndQuantity)
-       }
-        await prisma.purchase.updateMany({
-            data:{
-             status: status as PurchaseStatus
-            },
-            where:{id: {in: stockIds}, userId },
-            
-            
-        })
+        if (status === "RECEIVED") {
+
+            await massIncreaseStockQuantity(stockIdsAndQuantity);
+
+
+            await Promise.all(
+                stockIds.map(async (id) => {
+                    await createLedger("PURCHASE", id)
+
+
+                })
+
+            )
+
+        };
+
         
+        await prisma.purchase.updateMany({
+            data: {
+                status: status as PurchaseStatus
+            },
+            where: { id: { in: stockIds }, userId },
+
+
+        })
+
 
         revalidatePath('/purchases');
 
@@ -145,44 +161,46 @@ export async function massUpdatePurchase(stockIds: string[], status:  PurchaseSt
 
 }
 
-export async function generatePurchaseNumber(): Promise<number>{
-  let unique = false;
-  let purchaseNumber = 0;
+export async function generatePurchaseNumber(): Promise<number> {
+    let unique = false;
+    let purchaseNumber = 0;
 
-  while (!unique){
-    purchaseNumber = Math.floor(Math.random() * 99999) + 1
+    while (!unique) {
+        purchaseNumber = Math.floor(Math.random() * 99999) + 1
 
-    const existing = await prisma.purchase.findUnique({
-        where: {purchaseNumber}
-    });
+        const existing = await prisma.purchase.findUnique({
+            where: { purchaseNumber }
+        });
 
-    if (!existing) unique = true;
+        if (!existing) unique = true;
 
 
-  }
+    }
 
 
     return purchaseNumber
 };
 
-export async function changePurchaseStatus(formData: FormData, status: PurchaseStatus){
- const purchaseId = formData.get("purchaseId") as string;
- const purchaseQuantity = formData.get("purchaseQuantity") as string;
+export async function changePurchaseStatus(formData: FormData, status: PurchaseStatus) {
+    const purchaseId = formData.get("purchaseId") as string;
+    const purchaseQuantity = formData.get("purchaseQuantity") as string;
 
- console.log(purchaseQuantity);
- 
- 
+    console.log(purchaseQuantity);
+
+
 
     try {
         await prisma.purchase.update({
-            where:{id: purchaseId},
-            data:{status, stockItem:{
-                update:{
-                    quantity:{
-                        increment:Number(purchaseQuantity)
+            where: { id: purchaseId },
+            data: {
+                status, stockItem: {
+                    update: {
+                        quantity: {
+                            increment: Number(purchaseQuantity)
+                        }
                     }
                 }
-            }}
+            }
         });
 
         revalidatePath('/purchases')
@@ -194,7 +212,7 @@ export async function changePurchaseStatus(formData: FormData, status: PurchaseS
         console.error('Purchase failed:', error);
         throw error;
     }
-    
+
 
 }
 

@@ -88,6 +88,7 @@ model Vendor {
   contactName String
   userId      String
   stock       Stock[]
+  purchase    Purchase[]
   user        User       @relation(fields: [userId], references: [id])
 
   @@unique([userId, name])
@@ -139,7 +140,9 @@ model Purchase {
   quantity Int
   totalCost Decimal    @db.Decimal(10, 2)
   userId String
+  vendorId String
 
+  vendor Vendor @relation(fields: [vendorId], references: [id])
   user User @relation(fields: [userId], references: [id])
   stockItem Stock  @relation(fields: [stockId], references: [id])
 
