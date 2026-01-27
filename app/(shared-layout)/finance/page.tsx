@@ -22,7 +22,7 @@ export default async function page({searchParams}:
       </Suspense>
       <div>
         {/* Budget information can be placed here - Mirroring dashboard */}
-        <Link href={'/finance/budget'}><Button className="cursor-pointer">Manage Budget</Button></Link>
+        <Link href={'/finance/budget'}><Button className="cursor-pointer">Edit Budget</Button></Link>
 
       </div>
         </div>

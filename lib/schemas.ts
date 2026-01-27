@@ -78,5 +78,9 @@ export const purchaseSchema = z.object({
     
 });
 
+export const budgetSchema = z.object({
+    budget: z.string().min(1, 'Budget amount is required')
+})
+
 
 

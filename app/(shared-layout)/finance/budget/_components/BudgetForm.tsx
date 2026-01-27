@@ -10,23 +10,25 @@ import {
   FieldSet,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input";
+import { upsertBudget } from "@/lib/actions/budget";
+import { budgetSchema } from "@/lib/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
 const today = new Date();
 const currentMonth = today.toLocaleString('default', {month: 'long'});
+const currentYear = today.toLocaleString('default', {year: 'numeric'});
 
-const budgetSchema = z.object({
-    budget: z.string().min(1, 'Budget amount is required')
-})
 
 
 export default function BudgetForm(){
 
          const [isPending, startTransition] = useTransition();
+  
 
     const form = useForm({
         resolver: zodResolver(budgetSchema),
@@ -37,7 +39,14 @@ export default function BudgetForm(){
 
     function onSubmit(values: z.infer<typeof budgetSchema>){
         startTransition(async()=>{
-            console.log(values);
+
+            const res = await upsertBudget(values);
+
+            if (res.success){
+                toast.success(res.message);
+                form.reset()
+        
+            }
             
         })
     }
@@ -48,7 +57,7 @@ export default function BudgetForm(){
     <Controller name="budget" control={form.control}
     render={({field, fieldState})=>(
  <Field>
-          <FieldLabel htmlFor="username">Monthly Budget</FieldLabel>
+          <FieldLabel htmlFor="username">{currentMonth}  {currentYear}</FieldLabel>
           <Input id="username" type="number" placeholder="Budget $NZD" aria-invalid={fieldState.invalid} {...field} />
               {fieldState.invalid &&
                                         <FieldError errors={[fieldState.error]} />
@@ -66,10 +75,10 @@ export default function BudgetForm(){
             <div className="w-full">
       <Button disabled={isPending} className="cursor-pointer">
          {isPending ? (
-                <div>
-                    <Loader2/>
+                <>
+                    <Loader2 className="size-4 animate-spin"/>
                      <span>Updating</span>
-                </div>
+                </>
             ):
             (
                 <span>Update</span>

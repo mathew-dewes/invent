@@ -9,8 +9,6 @@ export default async function Purchases() {
     const chartData = await getPurchaseChartData();
 
 
-    console.log(chartData);
-
 
 
     const urgentPurchaseCount = purchases.filter((i => i.status !== "RECEIVED")).length

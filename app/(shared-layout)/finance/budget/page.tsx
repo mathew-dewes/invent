@@ -1,9 +1,13 @@
 import BudgetForm from "./_components/BudgetForm";
+import BudgetAmount from "./_components/BudgetAmount";
 
 export default function page(){
+
     return(
         <div>
-            <h1>Budget page</h1>
+          <BudgetAmount/>
+          
+ 
             <div className="mt-10">
             <BudgetForm />
             </div>
