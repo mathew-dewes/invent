@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 
 export default function HomePage() {
@@ -13,8 +14,10 @@ export default function HomePage() {
         </div>
 
         <div className="flex justify-center gap-5 mt-8">
-          <Button>Sign up</Button>
-          <Button variant={"outline"}>Login</Button>
+          <Link href={'/auth/register'}><Button className="cursor-pointer">Register</Button></Link>
+   
+          <Link href={'/auth/login'}><Button className="cursor-pointer" variant={"outline"}>Login</Button></Link>
+      
         </div>
 
         <p className="mt-10">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Numquam veritatis, officiis quod facere tenetur illum explicabo ab cum voluptatibus voluptatem.</p>
