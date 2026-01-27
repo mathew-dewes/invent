@@ -45,7 +45,7 @@ export function Navbar() {
            
                     </h1></Link>
                 <div className="flex items-center gap-2">
-                    {links.map((link, key)=>{
+                    {session && links.map((link, key)=>{
                         return <Link 
                         key={key} 
                         className={generateStyling(link.href)} 
