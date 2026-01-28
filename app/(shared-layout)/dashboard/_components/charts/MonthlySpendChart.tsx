@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+
 export const description = "An interactive area chart"
 
 
@@ -129,7 +130,7 @@ export function MonthlySpendChart({ data }:
               minTickGap={32}
               tickFormatter={(value) => {
                 const date = new Date(value)
-                return date.toLocaleDateString("en-US", {
+                return date.toLocaleDateString("en-NZ", {
                   month: "short",
                   day: "numeric",
                 })
@@ -138,17 +139,25 @@ export function MonthlySpendChart({ data }:
             <ChartTooltip
               cursor={false}
               content={
-                <ChartTooltipContent
+                <ChartTooltipContent  indicator="dot"
+          
                   labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("en-US", {
+                    return new Date(value).toLocaleDateString("en-NZ", {
                       month: "short",
                       day: "numeric",
-                    })
+                    });
                   }}
-                  indicator="dot"
+                 
+          
+          
                 />
+                
               }
+
+     
             />
+
+            
 
             <Area
               dataKey="spend"
@@ -156,6 +165,8 @@ export function MonthlySpendChart({ data }:
               fill="#86efac"
               stroke="#86efac"
               stackId="a"
+              
+              
             />
             <ChartLegend content={<ChartLegendContent />} />
           </AreaChart>
