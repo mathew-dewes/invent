@@ -3,8 +3,6 @@ import Link from "next/link";
 
 
 export default function HomePage() {
-
-  // Dashboard to go here
   return (
     <div>
       <div className="mt-30">
