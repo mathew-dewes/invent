@@ -14,12 +14,6 @@ export default async function Budget() {
     const chartData = await getBudgetChartData();
 
 
-
-
-
-  
-
-
     return (
         <div className="border-2 p-3 rounded-xl bg-secondary">
             <h1 className="font-semibold text-xl py-3 ml-1">Budget</h1>
