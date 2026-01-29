@@ -67,3 +67,13 @@ export function decimalToMoney(value: Prisma.Decimal) {
     ).format(value.toNumber())
 };
 
+
+export function getNZDateKey(date = new Date()) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Pacific/Auckland",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date); 
+}
+

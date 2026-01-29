@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { getNZDateKey } from "@/lib/helpers"
 
 
 export const description = "An interactive area chart"
@@ -49,20 +50,23 @@ export function MonthlySpendChart({ data }:
 
 
   const filteredData = data.filter((item) => {
-      const dateStr = item.date;
-        const nowStr = new Date().toISOString().slice(0, 10);
 
-    let daysToSubtract = 30;
-    if (timeRange === "7d") daysToSubtract = 7;
+    const nowKey = getNZDateKey();
+      let days = 30;
 
-    const startDate = new Date();
-     startDate.setDate(startDate.getDate() - daysToSubtract);
-       const startStr = startDate.toISOString().slice(0, 10);
+    if (timeRange === "7d") days = 7;
+
+    const start = new Date();
+ start.setUTCDate(start.getUTCDate() - days);
+  const startKey = getNZDateKey(start);
    
 
-      return dateStr >= startStr && dateStr <= nowStr;
+    return item.date >= startKey && item.date <= nowKey;
   });
 
+
+
+  
   return (
     <Card className="pt-0">
       <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
@@ -129,7 +133,7 @@ export function MonthlySpendChart({ data }:
               tickMargin={8}
               minTickGap={32}
               tickFormatter={(value) => {
-                const date = new Date(value)
+                const date = new Date(value);                
                 return date.toLocaleDateString("en-NZ", {
                   month: "short",
                   day: "numeric",

@@ -12,8 +12,6 @@ import { MonthlySpendChart } from "./charts/MonthlySpendChart";
 export default async function Budget() {
 
     const chartData = await getBudgetChartData();
-    
-
 
 
     return (
