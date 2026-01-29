@@ -49,6 +49,8 @@ export function MonthlySpendChart({ data }:
   const [timeRange, setTimeRange] = React.useState("30d");
 
 
+
+
   const filteredData = data.filter((item) => {
 
     const nowKey = getNZDateKey();
@@ -63,6 +65,7 @@ export function MonthlySpendChart({ data }:
 
     return item.date >= startKey && item.date <= nowKey;
   });
+
 
 
 

@@ -97,8 +97,59 @@ export async function getBudgetChartData() {
 
 // Get vendor purchases in the last 30 days
 
+type VendorCharData = {
+    vendorName: string,
+    spend: number
+}
+
 export async function getMonthlyVendorPurchases(){
     const userId = await getUserId();
+
+
+
+    const startOfMonth = new Date();
+
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+    
+
+    const vendors = await prisma.costLedger.findMany({
+        where:{userId, type:"PURCHASE", createdAt:{
+            gte: startOfMonth
+        }},
+        select:{
+            vendorName:true,
+            createdAt:true,
+            totalCost:true
+            
+        },
+        orderBy:{
+            totalCost: "desc"
+        }
+    });
+
+    const map = new Map<string, Prisma.Decimal>();;
+
+    for (const v of vendors){
+        if (!v.vendorName) return
+        const existing = map.get(v.vendorName) ?? new Prisma.Decimal(0);
+        map.set(v.vendorName, existing.plus(v.totalCost));
+    };
+
+    const start = new Date();
+    start.setDate(1);
+    start.setHours(0, 0, 0, 0);
+
+  const result: VendorCharData[] = [];
+  for (const [vendorName, total] of map.entries()) {
+    result.push({
+      vendorName,
+      spend: total.toNumber(),
+    });
+  }
+
+
+    return result;
 
     
 
