@@ -20,16 +20,9 @@ import {
 
 export const description = "A bar chart"
 
-const chartData = [
-  { vendor: "Warehouse", spend: 32544 },
-    { vendor: "Bunnings", spend: 21554 },
-  { vendor: "PB Tech", spend: 14556 },
-  { vendor: "K Mart", spend: 5325 },
-  { vendor: "Harvey", spend: 3211 },
 
 
 
-]
 
 const chartConfig = {
   desktop: {
@@ -40,19 +33,21 @@ const chartConfig = {
 
 
 
-export function VendorChart() {
+export function VendorChart({vendors}:{
+  vendors: {vendorName: string, spend: number}[]
+}) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Spend by Vendors</CardTitle>
+        <CardTitle>Monthly Spend by Vendors</CardTitle>
         <CardDescription>December - January 2026</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <BarChart accessibilityLayer data={chartData}>
+          <BarChart accessibilityLayer data={vendors}>
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="vendor"
+              dataKey="vendorName"
               tickLine={false}
               tickMargin={10}
               axisLine={false}

@@ -1,6 +1,6 @@
 
 
-import { getBudgetChartData } from "@/lib/queries/budget";
+import { getBudgetChartData, getMonthlyVendorPurchases } from "@/lib/queries/budget";
 import BudgetBar from "./BudgetBar";
 
 import { VendorChart } from "./charts/VendorChart";
@@ -11,7 +11,7 @@ import { MonthlySpendChart } from "./charts/MonthlySpendChart";
 
 export default async function Budget() {
 
-    const chartData = await getBudgetChartData();
+    const [chartData, vendorData] = await Promise.all([getBudgetChartData(), getMonthlyVendorPurchases()])
 
 
     return (
@@ -27,7 +27,7 @@ export default async function Budget() {
 
                 <div className="col-span-2">
 
-                    <VendorChart />
+                    <VendorChart vendors={vendorData ?? []} />
 
                 </div>
 
