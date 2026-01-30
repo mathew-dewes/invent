@@ -119,4 +119,6 @@ export type Finance = {
     year: number;
 }
 
-export type InventoryStatus = "out" | "low" | "good"
+export type InventoryStatus = "out" | "low" | "good";
+
+export type TimeFrame = "day" | "week" | "month" | "year";

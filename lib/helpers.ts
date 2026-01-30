@@ -1,5 +1,5 @@
 import { Prisma } from "@/generated/prisma/client"
-import { StockStatus } from "./types"
+import { StockStatus, TimeFrame } from "./types"
 
 export function generateStockStatus(currentStock: number, reorderPointAmount: number): StockStatus {
 
@@ -75,5 +75,37 @@ export function getNZDateKey(date = new Date()) {
     month: "2-digit",
     day: "2-digit",
   }).format(date); 
+}
+
+
+export function getStartDate(timeFrame?: TimeFrame) {
+  const now = new Date(); // UTC on server
+  const start = new Date(now);
+
+  switch (timeFrame) {
+    case "day":
+      start.setUTCHours(0, 0, 0, 0);
+      break;
+
+    case "week":
+      start.setUTCDate(start.getUTCDate() - 7);
+      start.setUTCHours(0, 0, 0, 0);
+      break;
+
+    case "month":
+      start.setUTCDate(1);
+      start.setUTCHours(0, 0, 0, 0);
+      break;
+
+    case "year":
+      start.setUTCMonth(0, 1);
+      start.setUTCHours(0, 0, 0, 0);
+      break;
+
+    default:
+      return undefined; // no filter
+  }
+
+  return start;
 }
 
