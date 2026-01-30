@@ -17,7 +17,8 @@ export default async function Inventory() {
   const outValues = data["out"];
   const lowValues = data["low"];
 
-  const noAction = outValues.length == 0 && lowValues.length == 0
+  const noAction = outValues.length == 0 && lowValues.length == 0;
+
 
 
   return (
@@ -31,8 +32,8 @@ export default async function Inventory() {
       </div> }
 
       <div className={`flex gap-3 mt-5 ${noAction ? "hidden": ""}`}>
-        {<InventoryCard description="Stock items with quantity zero" cardType="Out of stock" title={"Out of stock"} values={outValues} href="/stock?stock=good" />}
-        {<InventoryCard description="Stock items below reorder point" cardType="Critical items" title={"Critical"} values={lowValues} href="/stock?stock=low" />}
+        {outValues.length != 0 && <InventoryCard description="Stock items with quantity zero" cardType="Out of stock" title={"Out of stock"} values={outValues} href="/stock?stock=good" />}
+        {lowValues.length != 0 && <InventoryCard description="Stock items below reorder point" cardType="Critical items" title={"Critical"} values={lowValues} href="/stock?stock=low" />}
  
 
 

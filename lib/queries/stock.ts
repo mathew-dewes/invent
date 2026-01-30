@@ -148,23 +148,15 @@ export async function getStockHealthData(){
         quantity: true,
         reorderPoint: true,
         name:true,
-        requests:{
-            select:{
-                quantity:true,
-                createdAt:true,
-                
-            }
-        }
       },
       where:{userId}
     });
 
-    console.log(stock[1].requests[0]?.createdAt.toLocaleString());
     
 
       const results = {
     out: stock.filter(s => s.quantity === 0),
-    low: stock.filter(s => s.quantity > 0 && s.quantity < s.reorderPoint),
+    low: stock.filter(s => s.quantity > 0 && s.quantity <= s.reorderPoint),
 
   };
 
