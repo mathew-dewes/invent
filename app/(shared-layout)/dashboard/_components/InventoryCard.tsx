@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { StatusCircle } from "@/components/web/StatusCircle";
+import { StockOverviewType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -16,12 +17,13 @@ import Link from "next/link";
 type Props = {
     title: string
     values: {quantity: number, reorderPoint: number, name: string}[],
-    cardType: "out" | "low" | "good"
-    href: string
+    cardType: StockOverviewType
+    href: string,
+    description: string
 
 }
 
-export async function InventoryCard({title, values, cardType, href }:Props){
+export async function InventoryCard({title, values, cardType, href, description }:Props){
 
   const totalQuantity = values.reduce((sum, item)=>{
 return sum + item.quantity
@@ -47,16 +49,17 @@ return sum + item.quantity
                 <Card className="w-full max-w-sm">
       <CardHeader>
         <CardTitle className="text-xl">
-          <div className="flex items-center gap-2 uppercase">
+          <div className="flex items-center gap-2">
            <StatusCircle status={cardType}/>
             <p>{title}</p>
     
             </div>
        </CardTitle>
         <CardDescription>
+          <p>{description}</p>
           {values.map((value, key)=>{
             return <p className="flex gap-1" key={key}><span className="font-semibold text-white/80">{value.name}</span>{totalQuantity > 1 && "- " + value.quantity + " units"}
-            {cardType == "low" ? " remaining" : ""}</p>
+            {cardType == "Below reorder point" ? " remaining" : ""}</p>
           })}
  
         </CardDescription>

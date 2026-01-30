@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { InventoryStatus, StockStatus } from "./types";
+import { StockOverviewType, StockStatus } from "./types";
 import { PurchaseStatus, RequestStatus } from "@/generated/prisma/enums";
 
 export function cn(...inputs: ClassValue[]) {
@@ -27,7 +27,6 @@ export function setStatusColor(status: StockStatus | RequestStatus | PurchaseSta
                   style = 'bg-green-400'
                   break;
               case 'Low Stock':
-              case 'PENDING':
                   style = 'bg-yellow-400'
                   break;
               default:
@@ -43,32 +42,30 @@ export function setStatusColor(status: StockStatus | RequestStatus | PurchaseSta
 }
 
 
-export function generateStatusColor(status: RequestStatus | InventoryStatus | PurchaseStatus){
+export function generateStatusColor(status: RequestStatus | StockOverviewType | PurchaseStatus){
         let color;
         
         switch (status) {
             case "COMPLETE":
-            case "good":
             case "RECEIVED":
                 color = 'bg-green-300'
                 break;
-            case "PENDING":
-            case "low":
+            case "Below reorder point":
                 color = 'bg-yellow-300'
                 break;
             case "OPEN":
             case "DELAYED":
+            case "Critical items":
                 color = 'bg-orange-400'
                    break;
             case "READY":
             case "PLACED":
                 color = 'bg-blue-300'
                     break;
-            case "out":
+            case "Out of stock":
                 color = 'bg-red-400'
                 break;
-                         default:
-                  color = 'bg-pink-300'
+           
         
 } 
 return color;
