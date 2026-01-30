@@ -16,8 +16,7 @@ export default async function page({searchParams}:
     return (
                 <div>
   <div className="flex justify-end">
-      <Link href={'#'}><ExportCSVButton/></Link>
-      {/* On click of the button above to export all entries taking the search params as the query */}
+     <ExportCSVButton/>
        
       </div>
       <Suspense fallback={<TableSkeleton/>}>

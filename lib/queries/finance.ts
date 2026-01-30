@@ -21,10 +21,9 @@ export async function getFinanceData(filter?: FinanceType, timeFrame?:TimeFrame)
                 gte: startDate
             }
         },
+    
         
-        include:{
-            vendor:true
-        },
+    
         orderBy:{
             createdAt: "desc"
         }
