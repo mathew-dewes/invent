@@ -16,7 +16,7 @@ export default function page() {
                 <div className="flex flex-col gap-6">
 
               <Action/>
-                    <div className="grid lg:grid-cols-2  gap-5">
+                    <div className="grid lg:grid-cols-3  gap-5">
                         <Inventory />
                         <Budget />
                     </div>
