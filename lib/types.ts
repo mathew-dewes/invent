@@ -123,3 +123,6 @@ export type Finance = {
 export type InventoryStatus = "out" | "low" | "good";
 
 export type TimeFrame = "day" | "week" | "month" | "year";
+
+
+export type StockOverviewType = "Out of stock" | "Below reorder point" | "Critical items"

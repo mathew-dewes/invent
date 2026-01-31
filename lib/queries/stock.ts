@@ -143,7 +143,7 @@ const stock = await prisma.stock.findMany({
 
 export async function getStockHealthData(){
           const userId = await getUserId();
-       const data = await prisma.stock.findMany({
+       const stock = await prisma.stock.findMany({
       select:{
         quantity: true,
         reorderPoint: true,
@@ -152,10 +152,12 @@ export async function getStockHealthData(){
       where:{userId}
     });
 
+    
+
       const results = {
-    out: data.filter(s => s.quantity === 0),
-    low: data.filter(s => s.quantity > 0 && s.quantity < s.reorderPoint),
-    good: data.filter(s => s.quantity > s.reorderPoint),
+    out: stock.filter(s => s.quantity === 0),
+    low: stock.filter(s => s.quantity > 0 && s.quantity <= s.reorderPoint),
+
   };
 
   return results

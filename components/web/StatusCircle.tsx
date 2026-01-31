@@ -1,10 +1,10 @@
 import { PurchaseStatus, RequestStatus } from "@/generated/prisma/enums";
-import { InventoryStatus } from "@/lib/types";
+import { StockOverviewType } from "@/lib/types";
 import {  generateStatusColor } from "@/lib/utils";
 
 
 
-export async function StatusCircle({status}:{status: RequestStatus | InventoryStatus | PurchaseStatus}){
+export async function StatusCircle({status}:{status: RequestStatus | StockOverviewType | PurchaseStatus}){
 
     const color = generateStatusColor(status);
     
